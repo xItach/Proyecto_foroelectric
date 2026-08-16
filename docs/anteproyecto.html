@@ -1,0 +1,907 @@
+<title>Anteproyecto Foro Electric</title>
+
+<style>
+  :root{
+    --bg:#F1F3EF;
+    --surface:#FFFFFF;
+    --surface-2:#E7EBE4;
+    --ink:#161A15;
+    --ink-2:#4A5247;
+    --ink-3:#6F786B;
+    --rule:#D5DAD0;
+    --rule-strong:#B7BFB1;
+    --accent:#16543C;
+    --accent-ink:#0F3D2B;
+    --accent-soft:#DEEAE1;
+    --copper:#8C4E28;
+    --copper-soft:#F1E4D9;
+    --crit:#9A2B1E;
+    --crit-bg:#F7E4E1;
+    --warn:#7F5D0F;
+    --warn-bg:#F5ECD5;
+    --ok:#2C6B4C;
+    --ok-bg:#E0EDE5;
+    --shadow:0 1px 2px rgba(22,26,21,.05), 0 8px 24px -16px rgba(22,26,21,.25);
+
+    --serif:Charter,"Bitstream Charter","Iowan Old Style","Source Serif Pro",Georgia,"Times New Roman",serif;
+    --sans:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0E120F;
+      --surface:#161B17;
+      --surface-2:#1D231E;
+      --ink:#E6EAE3;
+      --ink-2:#A9B3A5;
+      --ink-3:#838D7F;
+      --rule:#28302A;
+      --rule-strong:#3B453C;
+      --accent:#5FC192;
+      --accent-ink:#8AD7B2;
+      --accent-soft:#16301F;
+      --copper:#D9925F;
+      --copper-soft:#2B1F17;
+      --crit:#EF8A7C;
+      --crit-bg:#2E1714;
+      --warn:#DCB05C;
+      --warn-bg:#2A2211;
+      --ok:#6BC79A;
+      --ok-bg:#14291E;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+    }
+  }
+
+  :root[data-theme="dark"]{
+    --bg:#0E120F;
+    --surface:#161B17;
+    --surface-2:#1D231E;
+    --ink:#E6EAE3;
+    --ink-2:#A9B3A5;
+    --ink-3:#838D7F;
+    --rule:#28302A;
+    --rule-strong:#3B453C;
+    --accent:#5FC192;
+    --accent-ink:#8AD7B2;
+    --accent-soft:#16301F;
+    --copper:#D9925F;
+    --copper-soft:#2B1F17;
+    --crit:#EF8A7C;
+    --crit-bg:#2E1714;
+    --warn:#DCB05C;
+    --warn-bg:#2A2211;
+    --ok:#6BC79A;
+    --ok-bg:#14291E;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.8);
+  }
+
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--serif);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .shell{
+    max-width:76rem;
+    margin:0 auto;
+    padding:0 1.5rem 6rem;
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    gap:3rem;
+  }
+  @media (min-width:1080px){
+    .shell{grid-template-columns:14rem minmax(0,1fr);gap:4rem;align-items:start;}
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    grid-column:1/-1;
+    border-bottom:1px solid var(--rule-strong);
+    padding:4rem 0 2.25rem;
+    margin-bottom:.5rem;
+  }
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:.7rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    align-items:center;
+  }
+  .eyebrow .dot{color:var(--rule-strong);}
+  .masthead h1{
+    font-family:var(--sans);
+    font-weight:700;
+    letter-spacing:-.028em;
+    text-wrap:balance;
+    font-size:clamp(2.1rem,5.5vw,3.4rem);
+    line-height:1.05;
+    margin:.9rem 0 0;
+  }
+  .standfirst{
+    max-width:44ch;
+    margin-top:1.1rem;
+    font-size:1.15rem;
+    color:var(--ink-2);
+  }
+
+  /* ---------- index rail ---------- */
+  .rail{display:none;}
+  @media (min-width:1080px){
+    .rail{
+      display:block;
+      position:sticky;
+      top:2rem;
+      font-family:var(--mono);
+      font-size:.74rem;
+      line-height:1.5;
+    }
+  }
+  .rail p{
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    color:var(--ink-3);
+    padding-bottom:.6rem;
+    border-bottom:1px solid var(--rule);
+    margin-bottom:.75rem;
+  }
+  .rail ol{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+  .rail a{
+    color:var(--ink-2);
+    text-decoration:none;
+    display:grid;
+    grid-template-columns:1.6rem 1fr;
+    gap:.35rem;
+  }
+  .rail a span{color:var(--ink-3);}
+  .rail a:hover{color:var(--accent);}
+  .rail a:hover span{color:var(--accent);}
+  .rail a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px;}
+
+  /* ---------- flow ---------- */
+  .flow{min-width:0;display:flex;flex-direction:column;gap:3.25rem;}
+  section{scroll-margin-top:1.5rem;}
+  h2{
+    font-family:var(--sans);
+    font-weight:700;
+    letter-spacing:-.02em;
+    font-size:1.65rem;
+    line-height:1.15;
+    text-wrap:balance;
+    margin-bottom:1rem;
+    padding-top:.9rem;
+    border-top:2px solid var(--ink);
+  }
+  h2 .num{
+    display:block;
+    font-family:var(--mono);
+    font-size:.7rem;
+    font-weight:400;
+    letter-spacing:.14em;
+    color:var(--ink-3);
+    margin-bottom:.5rem;
+  }
+  h3{
+    font-family:var(--sans);
+    font-weight:650;
+    font-size:1.05rem;
+    letter-spacing:-.01em;
+    margin:1.75rem 0 .6rem;
+  }
+  p{max-width:68ch;}
+  .flow p + p{margin-top:.9rem;}
+  strong{font-weight:700;}
+  em{font-style:italic;}
+  code{
+    font-family:var(--mono);
+    font-size:.85em;
+    background:var(--surface-2);
+    padding:.1em .35em;
+    border-radius:3px;
+  }
+  a{color:var(--accent);text-decoration:underline;text-underline-offset:2px;}
+
+  ul.bullets{max-width:68ch;margin:.9rem 0 0;padding-left:1.1rem;display:flex;flex-direction:column;gap:.5rem;}
+  ul.bullets li::marker{color:var(--rule-strong);}
+
+  /* ---------- verdict block ---------- */
+  .verdict{
+    background:var(--surface);
+    border:1px solid var(--rule);
+    border-left:3px solid var(--accent);
+    padding:1.5rem 1.6rem;
+    box-shadow:var(--shadow);
+  }
+  .verdict p{max-width:64ch;}
+
+  /* ---------- risk cards ---------- */
+  .risks{display:grid;gap:1rem;margin-top:1.25rem;}
+  @media (min-width:720px){.risks{grid-template-columns:repeat(3,1fr);}}
+  .risk{
+    background:var(--surface);
+    border:1px solid var(--rule);
+    padding:1.15rem 1.2rem 1.3rem;
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+  .risk .sev{
+    font-family:var(--mono);
+    font-size:.65rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    align-self:flex-start;
+    padding:.2rem .45rem;
+    border-radius:2px;
+  }
+  .sev.alta{background:var(--crit-bg);color:var(--crit);}
+  .sev.media{background:var(--warn-bg);color:var(--warn);}
+  .risk h3{margin:0;font-size:1rem;}
+  .risk p{font-size:.93rem;color:var(--ink-2);margin:0;}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;margin-top:1.25rem;border:1px solid var(--rule);background:var(--surface);}
+  table{border-collapse:collapse;width:100%;min-width:40rem;font-size:.9rem;}
+  thead th{
+    font-family:var(--mono);
+    font-weight:400;
+    font-size:.66rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    text-align:left;
+    padding:.7rem .9rem;
+    border-bottom:1px solid var(--rule-strong);
+    background:var(--surface-2);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:.75rem .9rem;
+    border-bottom:1px solid var(--rule);
+    vertical-align:top;
+    color:var(--ink-2);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody td:first-child{color:var(--ink);font-weight:600;font-family:var(--sans);font-size:.87rem;}
+  table.nums td{font-variant-numeric:tabular-nums;}
+  .fix{color:var(--ink);}
+  .fix b{color:var(--accent);font-weight:700;}
+
+  /* ---------- schema block ---------- */
+  pre{
+    font-family:var(--mono);
+    font-size:.78rem;
+    line-height:1.65;
+    background:var(--surface);
+    border:1px solid var(--rule);
+    padding:1.1rem 1.2rem;
+    overflow-x:auto;
+    margin-top:1.25rem;
+    color:var(--ink-2);
+    tab-size:2;
+  }
+  pre .k{color:var(--accent);}
+  pre .c{color:var(--ink-3);font-style:italic;}
+  pre .s{color:var(--copper);}
+
+  /* ---------- mockups ---------- */
+  figure{margin-top:1.5rem;}
+  figcaption{
+    font-family:var(--mono);
+    font-size:.68rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+    margin-top:.7rem;
+    padding-top:.6rem;
+    border-top:1px solid var(--rule);
+  }
+  .mock{
+    background:var(--surface-2);
+    border:1px solid var(--rule);
+    padding:1.25rem;
+    font-family:var(--sans);
+  }
+  .filterbar{
+    display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;
+    padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid var(--rule-strong);
+  }
+  .chip{
+    font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;
+    padding:.28rem .5rem;border:1px solid var(--rule-strong);
+    background:var(--surface);color:var(--ink-2);border-radius:2px;white-space:nowrap;
+  }
+  .chip.on{background:var(--accent);border-color:var(--accent);color:var(--surface);}
+  :root[data-theme="dark"] .chip.on{color:#0E120F;}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip.on{color:#0E120F;}}
+
+  .cards{display:grid;gap:1rem;}
+  @media (min-width:680px){.cards{grid-template-columns:1fr 1fr;}}
+  .card{background:var(--surface);border:1px solid var(--rule);display:flex;flex-direction:column;}
+  .thumb{
+    aspect-ratio:16/10;
+    background:
+      repeating-linear-gradient(135deg,var(--surface-2) 0 8px,transparent 8px 16px),
+      var(--accent-soft);
+    border-bottom:1px solid var(--rule);
+    position:relative;
+    display:flex;align-items:flex-end;justify-content:space-between;
+    padding:.5rem;
+  }
+  .thumb .count,.thumb .flag{
+    font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;
+    background:var(--ink);color:var(--bg);padding:.2rem .4rem;border-radius:2px;
+  }
+  .thumb .flag{background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit);}
+  .card-body{padding:.95rem 1rem 1.1rem;display:flex;flex-direction:column;gap:.6rem;}
+  .cat{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--copper);}
+  .card h4{font-family:var(--sans);font-size:1rem;font-weight:680;letter-spacing:-.012em;line-height:1.25;}
+  .card .sub{font-family:var(--serif);font-size:.85rem;color:var(--ink-2);line-height:1.45;}
+  .specs{
+    display:grid;grid-template-columns:1fr 1fr;gap:.55rem .75rem;
+    padding:.7rem 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  }
+  .spec .lbl{font-family:var(--mono);font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);display:block;}
+  .spec .val{font-family:var(--sans);font-size:.82rem;font-weight:640;font-variant-numeric:tabular-nums;}
+  .meter{display:inline-flex;gap:2px;vertical-align:middle;margin-left:.3rem;}
+  .meter i{width:5px;height:9px;background:var(--rule-strong);display:block;}
+  .meter i.f{background:var(--accent);}
+  .tags{display:flex;flex-wrap:wrap;gap:.3rem;}
+  .tag{font-family:var(--mono);font-size:.6rem;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--rule);padding:.18rem .4rem;border-radius:2px;}
+  .foot{display:flex;justify-content:space-between;gap:.5rem;font-family:var(--mono);font-size:.6rem;color:var(--ink-3);letter-spacing:.05em;}
+  .foot .ok{color:var(--ok);}
+
+  /* ---------- detail skeleton ---------- */
+  .skel{display:grid;gap:1rem;}
+  @media (min-width:720px){.skel{grid-template-columns:11rem 1fr;}}
+  .skel-toc{
+    font-family:var(--mono);font-size:.65rem;line-height:1.9;color:var(--ink-3);
+    border-right:1px solid var(--rule);padding-right:1rem;
+  }
+  @media (max-width:719px){.skel-toc{border-right:none;border-bottom:1px solid var(--rule);padding:0 0 .75rem;}}
+  .skel-toc b{color:var(--accent);font-weight:400;}
+  .steps{display:flex;flex-direction:column;gap:.5rem;}
+  .step{
+    display:grid;grid-template-columns:1.9rem 1fr;gap:.75rem;align-items:baseline;
+    background:var(--surface);border:1px solid var(--rule);padding:.6rem .8rem;
+  }
+  .step.new{border-left:3px solid var(--copper);background:var(--copper-soft);}
+  .step .idx{font-family:var(--mono);font-size:.68rem;color:var(--ink-3);font-variant-numeric:tabular-nums;}
+  .step .ttl{font-family:var(--sans);font-size:.87rem;font-weight:640;}
+  .step .why{font-family:var(--serif);font-size:.83rem;color:var(--ink-2);display:block;margin-top:.15rem;}
+  .step .badge{
+    font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--copper);border:1px solid var(--copper);padding:.1rem .3rem;border-radius:2px;
+    margin-left:.4rem;white-space:nowrap;vertical-align:middle;
+  }
+
+  /* ---------- phases ---------- */
+  .phases{display:grid;gap:1rem;margin-top:1.25rem;}
+  @media (min-width:760px){.phases{grid-template-columns:repeat(3,1fr);}}
+  .phase{border:1px solid var(--rule);background:var(--surface);padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:.5rem;}
+  .phase .ph{font-family:var(--mono);font-size:.62rem;letter-spacing:.13em;text-transform:uppercase;color:var(--copper);}
+  .phase h3{margin:0;font-size:.98rem;}
+  .phase ul{list-style:none;display:flex;flex-direction:column;gap:.4rem;font-size:.88rem;color:var(--ink-2);}
+  .phase li{padding-left:1rem;position:relative;}
+  .phase li::before{content:"—";position:absolute;left:0;color:var(--rule-strong);}
+
+  /* ---------- questions ---------- */
+  .q{border-top:1px solid var(--rule);padding:1rem 0;display:grid;gap:.3rem;}
+  .q:last-child{border-bottom:1px solid var(--rule);}
+  .q .ask{font-family:var(--sans);font-weight:660;font-size:.97rem;}
+  .q .lean{font-size:.9rem;color:var(--ink-2);}
+  .q .lean b{color:var(--accent);font-weight:700;}
+
+  .endnote{
+    margin-top:1rem;font-family:var(--mono);font-size:.7rem;letter-spacing:.06em;
+    color:var(--ink-3);border-top:1px solid var(--rule);padding-top:1rem;
+  }
+
+  @media (prefers-reduced-motion:no-preference){
+    .rail a{transition:color .15s ease;}
+  }
+</style>
+
+<div class="shell">
+
+  <header class="masthead">
+    <div class="eyebrow">
+      <span>Documento de trabajo</span><span class="dot">/</span>
+      <span>Borrador v1</span><span class="dot">/</span>
+      <span>Agosto 2026</span>
+    </div>
+    <h1>Anteproyecto Foro Electric</h1>
+    <p class="standfirst">Revisión del modelo de contenido para las guías de montaje: qué restricciones tiene tal como está planteado, y qué cambiaría antes de escribir la primera línea de código.</p>
+  </header>
+
+  <nav class="rail" aria-label="Índice del documento">
+    <p>Índice</p>
+    <ol>
+      <li><a href="#veredicto"><span>§1</span>Veredicto</a></li>
+      <li><a href="#cuellos"><span>§2</span>Cuellos de botella</a></li>
+      <li><a href="#listado"><span>§3</span>Vista de listado</a></li>
+      <li><a href="#rubrica"><span>§4</span>Rúbrica de dificultad</a></li>
+      <li><a href="#detalle"><span>§5</span>Página de detalle</a></li>
+      <li><a href="#banco"><span>§6</span>Modo banco</a></li>
+      <li><a href="#datos"><span>§7</span>Un solo origen</a></li>
+      <li><a href="#costos"><span>§8</span>Costos</a></li>
+      <li><a href="#taxonomia"><span>§9</span>Taxonomía</a></li>
+      <li><a href="#comunidad"><span>§10</span>Comentarios</a></li>
+      <li><a href="#donaciones"><span>§11</span>Donaciones</a></li>
+      <li><a href="#seguridad"><span>§12</span>Seguridad</a></li>
+      <li><a href="#taller"><span>§13</span>Colaboradores</a></li>
+      <li><a href="#fases"><span>§14</span>Por fases</a></li>
+      <li><a href="#decisiones"><span>§15</span>Decisiones</a></li>
+    </ol>
+  </nav>
+
+  <main class="flow">
+
+    <section id="veredicto">
+      <h2><span class="num">§1</span>El modelo se sostiene; el riesgo no está donde parece</h2>
+      <div class="verdict">
+        <p>La estructura que planteaste es correcta y bastante completa: cubre lo que un lector necesita para <em>decidir</em> si hace un proyecto y para <em>comprar</em> lo que necesita. Nada de lo que sigue propone tirarla abajo.</p>
+        <p>El problema real no es técnico. Un sitio de guías de electrónica no se cae por el código: se cae porque a los ocho meses los precios están desactualizados, la misma explicación de <em>qué es un divisor de tensión</em> está escrita en nueve proyectos con nueve redacciones distintas, y nadie quiere moderar comentarios. <strong>Las restricciones importantes son editoriales y operativas.</strong></p>
+        <p>Y hay un hueco de contenido: tu esquema le sirve muy bien a quien evalúa y compra, pero no a quien ya está en la mesa con el cautín caliente y el circuito no funciona. Ese es el momento en que la gente más busca, y el que más fideliza.</p>
+      </div>
+    </section>
+
+    <section id="cuellos">
+      <h2><span class="num">§2</span>Los tres cuellos de botella</h2>
+      <p>Si solo te llevas tres cosas de este documento, que sean estas. Todo lo demás son detalles de ejecución.</p>
+      <div class="risks">
+        <article class="risk">
+          <span class="sev alta">Riesgo alto</span>
+          <h3>El costo envejece solo</h3>
+          <p>Un precio escrito a mano dentro de un proyecto está mal a los seis meses y está mal <em>hoy</em> para quien lee desde otro país. Si además el mismo componente aparece en quince guías, cada actualización son quince ediciones.</p>
+        </article>
+        <article class="risk">
+          <span class="sev alta">Riesgo alto</span>
+          <h3>Los conceptos se duplican</h3>
+          <p>«Explicación compactada de conceptos» dentro de cada proyecto significa escribir <em>realimentación negativa</em> doce veces. Doce redacciones distintas, doce niveles de calidad, y cero mantenimiento cuando encuentres una mejor forma de explicarlo.</p>
+        </article>
+        <article class="risk">
+          <span class="sev media">Riesgo medio</span>
+          <h3>Los comentarios cuestan más que el sitio</h3>
+          <p>Cuentas, spam, moderación, datos personales, backend. Y en un tema donde alguien puede aconsejar mal sobre 120&nbsp;V, moderar deja de ser opcional. Es la única pieza de tu plan que exige atención diaria para siempre.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="listado">
+      <h2><span class="num">§3</span>La vista de listado, campo por campo</h2>
+      <p>Esta es la pantalla en la que dijiste querer enfocarte. Reviso cada campo que propusiste, digo qué se rompe y con qué lo cambiaría.</p>
+
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th scope="col">Campo</th><th scope="col">Restricción</th><th scope="col">Alternativa</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nombre</td>
+              <td>«Fuente 0–30&nbsp;V» dice qué es, no qué se aprende ni para qué sirve. En una grilla de veinte tarjetas, los nombres solos no diferencian.</td>
+              <td class="fix"><b>Nombre + una línea de propósito.</b> Un subtítulo de 10–15 palabras que responda «¿qué hace y qué aprendo?». Es el campo que más decide el clic.</td>
+            </tr>
+            <tr>
+              <td>Dificultad</td>
+              <td>Es subjetiva y no se sostiene entre colaboradores: tu «intermedio» y el mío no son el mismo. El lector nuevo no puede calibrarla contra nada.</td>
+              <td class="fix"><b>Derivarla de una rúbrica</b> (§4), no opinarla. Mostrar el nivel 1–5 en la tarjeta y los ejes que lo producen en el detalle, para que sea auditable.</td>
+            </tr>
+            <tr>
+              <td>Tiempo de montaje</td>
+              <td>Un principiante tarda tres o cuatro veces más que quien lo diseñó. Un número único genera frustración garantizada. Además, ¿incluye esperar los componentes?</td>
+              <td class="fix"><b>Rango + a quién aplica + sesiones.</b> «6–9&nbsp;h en 3 sesiones, para alguien que ya soldó antes.» Excluir explícitamente compra y envío, y decirlo.</td>
+            </tr>
+            <tr>
+              <td>Carrusel de imágenes</td>
+              <td>Un carrusel por tarjeta en una grilla es un antipatrón: carga muchas imágenes, compite por atención con las tarjetas vecinas y casi nadie lo desliza. En móvil se lleva los datos del usuario.</td>
+              <td class="fix"><b>Una sola imagen + contador.</b> Foto del montaje terminado, bien encuadrada, con un «12 fotos» discreto. El carrusel completo vive en el detalle, que es donde sí se mira.</td>
+            </tr>
+            <tr>
+              <td>Costo aproximado</td>
+              <td>Moneda, país, proveedor, cantidad e inflación. Una cifra exacta es una promesa que no puedes cumplir, y además mezcla materiales con herramientas.</td>
+              <td class="fix"><b>Banda de costo en la tarjeta</b> (bajo / medio / alto, con el rango entre paréntesis) y la tabla detallada con fecha en el detalle. Ver §8.</td>
+            </tr>
+            <tr>
+              <td>Conceptos previos</td>
+              <td>Como texto libre se convierte en «Ley de Ohm», «ley de ohm» y «Ohm» como tres cosas distintas. No sirve para filtrar ni para navegar.</td>
+              <td class="fix"><b>Vocabulario controlado.</b> Una lista cerrada de conceptos, cada uno con su ficha. Habilita «ver todos los proyectos que usan PWM» y evita reescribir la teoría.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Tres cosas que le faltan a la tarjeta</h3>
+      <ul class="bullets">
+        <li><strong>Estado y fecha.</strong> «Probado · actualizado ago 2026» le dice al lector si puede confiar. Un proyecto sin fecha visible envejece en silencio.</li>
+        <li><strong>Aviso de riesgo, si aplica.</strong> Un proyecto conectado a la red eléctrica debe declararlo <em>antes</em> del clic, no dentro. Es información de decisión, no letra chica.</li>
+        <li><strong>Filtros reales.</strong> Con veinte proyectos por categoría, la grilla sin filtros deja de servir. Filtrar por dificultad, costo, tiempo y concepto es lo que convierte el catálogo en algo usable.</li>
+      </ul>
+
+      <figure>
+        <div class="mock">
+          <div class="filterbar">
+            <span class="chip on">Alimentación</span>
+            <span class="chip">Dificultad ≤ 3</span>
+            <span class="chip">Costo bajo</span>
+            <span class="chip">&lt; 4 h</span>
+            <span class="chip">Sin red eléctrica</span>
+            <span class="chip">Concepto ▾</span>
+          </div>
+          <div class="cards">
+
+            <article class="card">
+              <div class="thumb"><span class="flag">⚠ Red 120 V</span><span class="count">12 fotos</span></div>
+              <div class="card-body">
+                <span class="cat">Alimentación</span>
+                <h4>Fuente variable 0–30 V / 3 A</h4>
+                <p class="sub">Fuente de banco con regulación lineal y limitación de corriente ajustable.</p>
+                <div class="specs">
+                  <div class="spec">
+                    <span class="lbl">Dificultad</span>
+                    <span class="val">4 / 5
+                      <span class="meter" aria-hidden="true"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></span>
+                    </span>
+                  </div>
+                  <div class="spec"><span class="lbl">Tiempo</span><span class="val">6–9 h · 3 sesiones</span></div>
+                  <div class="spec"><span class="lbl">Costo</span><span class="val">Alto · 180–260 k</span></div>
+                  <div class="spec"><span class="lbl">Instrumentos</span><span class="val">Multímetro</span></div>
+                </div>
+                <div class="tags">
+                  <span class="tag">Regulación lineal</span><span class="tag">Realimentación</span><span class="tag">Disipación térmica</span>
+                </div>
+                <div class="foot"><span class="ok">● Probado</span><span>Actualizado ago 2026</span></div>
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="thumb"><span></span><span class="count">7 fotos</span></div>
+              <div class="card-body">
+                <span class="cat">Control</span>
+                <h4>Secuenciador de LEDs con 555</h4>
+                <p class="sub">Primer proyecto con temporizador: astable, conteo y depuración con multímetro.</p>
+                <div class="specs">
+                  <div class="spec">
+                    <span class="lbl">Dificultad</span>
+                    <span class="val">1 / 5
+                      <span class="meter" aria-hidden="true"><i class="f"></i><i></i><i></i><i></i><i></i></span>
+                    </span>
+                  </div>
+                  <div class="spec"><span class="lbl">Tiempo</span><span class="val">1–2 h · 1 sesión</span></div>
+                  <div class="spec"><span class="lbl">Costo</span><span class="val">Bajo · 15–25 k</span></div>
+                  <div class="spec"><span class="lbl">Instrumentos</span><span class="val">Ninguno</span></div>
+                </div>
+                <div class="tags">
+                  <span class="tag">Astable</span><span class="tag">Constante RC</span><span class="tag">Ley de Ohm</span>
+                </div>
+                <div class="foot"><span class="ok">● Probado</span><span>Actualizado jul 2026</span></div>
+              </div>
+            </article>
+
+          </div>
+        </div>
+        <figcaption>Maqueta — grilla de categoría con filtros, una imagen por tarjeta y ficha de decisión</figcaption>
+      </figure>
+    </section>
+
+    <section id="rubrica">
+      <h2><span class="num">§4</span>Una rúbrica para que «dificultad» signifique algo</h2>
+      <p>Esto lo puedes adoptar tal cual. Cada colaborador puntúa seis ejes, se suman y el total cae en un nivel. Deja de ser opinión y pasa a ser algo que dos personas distintas calculan igual.</p>
+
+      <div class="tw">
+        <table class="nums">
+          <thead>
+            <tr><th scope="col">Eje</th><th scope="col">0 puntos</th><th scope="col">1 punto</th><th scope="col">2 puntos</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Componentes</td><td>Menos de 15</td><td>15 – 40</td><td>Más de 40</td></tr>
+            <tr><td>Montaje</td><td>Protoboard</td><td>Perfboard o PCB, THT</td><td>SMD o mecanizado de caja</td></tr>
+            <tr><td>Instrumentación</td><td>Ninguna</td><td>Multímetro</td><td>Osciloscopio o generador</td></tr>
+            <tr><td>Programación</td><td>No lleva</td><td>Firmware listo para cargar</td><td>Hay que escribir o adaptar código</td></tr>
+            <tr><td>Riesgo eléctrico</td><td>Hasta 24 V DC</td><td>Baterías de litio o &gt; 1 A</td><td>Red eléctrica 120 / 240 V</td></tr>
+            <tr><td>Ajuste y calibración</td><td>Funciona al conectar</td><td>Un ajuste simple</td><td>Caracterización o medición fina</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="margin-top:1rem"><strong>Total → nivel:</strong> <code>0–2 → 1 · Introductorio</code> &nbsp; <code>3–4 → 2 · Básico</code> &nbsp; <code>5–7 → 3 · Intermedio</code> &nbsp; <code>8–9 → 4 · Avanzado</code> &nbsp; <code>10–12 → 5 · Experto</code></p>
+      <p>Una consecuencia útil: el eje de riesgo eléctrico empuja solo hacia arriba cualquier proyecto conectado a la red, que es exactamente lo que quieres que pase. Y mostrando los seis ejes en el detalle, el lector entiende <em>por qué</em> algo es difícil — quizá sea difícil por el instrumental, que él sí tiene.</p>
+    </section>
+
+    <section id="detalle">
+      <h2><span class="num">§5</span>La página de detalle: tu orden, más lo que falta</h2>
+      <p>Tu secuencia funciona como columna vertebral. El ajuste que propongo parte de que nadie lee esta página de corrido: se entra en cuatro momentos distintos y cada uno busca una cosa.</p>
+      <ul class="bullets">
+        <li><strong>Evaluar</strong> — «¿me alcanza el tiempo, el dinero y el conocimiento?»</li>
+        <li><strong>Comprar</strong> — «¿qué pido y cuánto me cuesta?»</li>
+        <li><strong>Construir</strong> — «¿qué hago ahora, y cómo sé que voy bien?»</li>
+        <li><strong>Depurar</strong> — «lo armé, no funciona, ¿qué reviso?»</li>
+      </ul>
+      <p style="margin-top:.9rem">Tu esquema cubre muy bien los dos primeros. Los dos últimos son los que faltan, y son los que hacen que alguien vuelva al sitio y lo recomiende. Marco en cobre las secciones nuevas.</p>
+
+      <figure>
+        <div class="mock">
+          <div class="skel">
+            <div class="skel-toc">
+              Índice fijo<br>
+              <b>▸ Ficha técnica</b><br>
+              ▸ Introducción<br>
+              ▸ Conceptos<br>
+              ▸ Materiales<br>
+              ▸ Diagramas<br>
+              ▸ Montaje<br>
+              ▸ Resultados<br>
+              ▸ Fallas<br>
+              ▸ Apoyo<br>
+              ▸ Notas<br>
+              ▸ Preguntas
+            </div>
+            <div class="steps">
+              <div class="step"><span class="idx">01</span><span><span class="ttl">Ficha técnica y aviso de seguridad</span><span class="why">Los mismos datos de la tarjeta, sin volver atrás. Si toca red eléctrica, el aviso va aquí arriba y no más abajo.</span></span></div>
+              <div class="step"><span class="idx">02</span><span><span class="ttl">Carrusel del montaje</span><span class="why">Aquí sí: es el sitio donde el lector quiere ver detalle, cableado y caja terminada.</span></span></div>
+              <div class="step"><span class="idx">03</span><span><span class="ttl">Introducción</span><span class="why">Qué hace, qué se aprende y — sobre todo — qué <em>no</em> hace. Los límites declarados evitan la mitad de las decepciones.</span></span></div>
+              <div class="step"><span class="idx">04</span><span><span class="ttl">Conceptos previos</span><span class="why">Enlaces a fichas de concepto reutilizables, más dos líneas de «cómo se aplica en este circuito». Sube antes de materiales: si no entiendes el concepto, no deberías estar comprando todavía.</span></span></div>
+              <div class="step"><span class="idx">05</span><span><span class="ttl">Materiales <span class="badge">separar herramientas</span></span><span class="why">Dos tablas distintas: consumibles del proyecto (entran al costo) y herramientas necesarias (no entran, pero se compran una vez). Mezclarlas infla el costo y espanta.</span></span></div>
+              <div class="step"><span class="idx">06</span><span><span class="ttl">Diagramas eléctricos</span><span class="why">SVG con zoom, no una foto del esquemático. Más el archivo fuente descargable y un PDF para imprimir.</span></span></div>
+              <div class="step new"><span class="idx">07</span><span><span class="ttl">Procedimiento de montaje <span class="badge">nuevo</span></span><span class="why">Por etapas, con un punto de verificación medible al final de cada una: «antes de seguir, debes leer 12 V ± 0,5 en el pin 3». Esto es lo que separa una guía de un álbum de fotos.</span></span></div>
+              <div class="step new"><span class="idx">08</span><span><span class="ttl">Resultados esperados <span class="badge">reformulado</span></span><span class="why">Tu «evidencia de funcionamiento», pero medible: tabla de valores con tolerancias, capturas de osciloscopio y el video. Así el lector <em>verifica</em>, no solo compara con un video.</span></span></div>
+              <div class="step new"><span class="idx">09</span><span><span class="ttl">Fallas comunes y diagnóstico <span class="badge">nuevo</span></span><span class="why">Síntoma → causas probables → cómo descartarlas. Es la sección más valiosa del sitio y la que más tráfico de búsqueda atrae. También la que convierte los comentarios en documentación.</span></span></div>
+              <div class="step"><span class="idx">10</span><span><span class="ttl">Material de apoyo</span><span class="why">Baja de posición: es para profundizar después, no para construir. Marcar cuáles son en inglés y cuáles son PDF pesados.</span></span></div>
+              <div class="step"><span class="idx">11</span><span><span class="ttl">Notas del colaborador, créditos y cambios</span><span class="why">Tu sección, más quién lo probó, bajo qué licencia se reutiliza y qué cambió desde la última versión.</span></span></div>
+              <div class="step"><span class="idx">12</span><span><span class="ttl">Preguntas y comentarios</span><span class="why">Al final, y separando «pregunta» de «reporte de error» — tienen ciclos de vida distintos (ver §10).</span></span></div>
+            </div>
+          </div>
+        </div>
+        <figcaption>Maqueta — estructura del documento de proyecto con índice fijo</figcaption>
+      </figure>
+
+      <h3>Qué pasó con «explicación compactada de conceptos»</h3>
+      <p>Se partió en dos. La teoría general vive una sola vez en una <strong>ficha de concepto</strong> (qué es un divisor de tensión, cómo se calcula, dónde falla) enlazada desde todos los proyectos que la usan. Dentro del proyecto quedan solo dos o tres líneas de <em>por qué aquí se eligió este valor</em>, que es lo verdaderamente específico y lo que nadie más puede escribir por ti.</p>
+      <p>Ganas tres cosas: escribes la teoría una vez y mejora para todos; los proyectos quedan más cortos y más útiles; y el glosario se vuelve una sección con valor propio que la gente consulta sin venir de un proyecto.</p>
+    </section>
+
+    <section id="banco">
+      <h2><span class="num">§6</span>Modo banco</h2>
+      <p>La consideración de comodidad más importante que puedo darte, y la que ningún competidor tiene: tu lector no está en un escritorio. Está de pie, con el celular apoyado contra un rollo de estaño, las manos ocupadas y la pantalla apagándose cada treinta segundos.</p>
+      <p>Un botón <strong>«Modo banco»</strong> en la página de proyecto que cambie a una vista despojada:</p>
+      <ul class="bullets">
+        <li>Solo materiales, diagrama y pasos. Sin introducción, sin teoría, sin carrusel.</li>
+        <li><strong>Casillas que se recuerdan</strong> en la lista de materiales y en los pasos, guardadas en el navegador. Vuelves al día siguiente y sigues donde ibas.</li>
+        <li>Tipografía grande, oscuro por defecto, diagrama a pantalla completa con zoom.</li>
+        <li>Mantener la pantalla encendida mientras la vista esté abierta (la API del navegador lo permite y no requiere nada instalado).</li>
+      </ul>
+      <p style="margin-top:.9rem">No cuesta casi nada construirlo si la estructura de datos está bien hecha desde el principio — es la misma información, filtrada. Cuesta muchísimo agregarlo después si los pasos no existen como datos separados. Por eso importa decidirlo ahora y no en la fase 3.</p>
+    </section>
+
+    <section id="datos">
+      <h2><span class="num">§7</span>Un solo origen para tarjeta y detalle</h2>
+      <p>La restricción silenciosa de tu borrador: el «resumen» del listado y la ficha del detalle tienen los mismos datos. Si se escriben dos veces, se desincronizan — siempre. La tarjeta debe <em>derivarse</em> del proyecto, nunca copiarse.</p>
+      <p>Un archivo por proyecto, con encabezado estructurado y el cuerpo en texto. Los colaboradores llenan campos; la interfaz se arma sola.</p>
+
+      <pre><span class="c">--- proyectos/alimentacion/fuente-variable-0-30v.md ---</span>
+
+<span class="k">titulo</span>: Fuente variable 0–30 V / 3 A
+<span class="k">proposito</span>: Fuente de banco con regulación lineal y limitación de corriente
+<span class="k">categoria</span>: alimentacion        <span class="c"># una sola, define la URL</span>
+<span class="k">etiquetas</span>: [banco, laboratorio, lineal]
+
+<span class="k">dificultad</span>:                    <span class="c"># nivel calculado desde estos ejes</span>
+  componentes: 1
+  montaje: 2
+  instrumentacion: 1
+  programacion: 0
+  riesgo_electrico: 2
+  calibracion: 2
+
+<span class="k">tiempo</span>:
+  horas_min: 6
+  horas_max: 9
+  sesiones: 3
+  perfil: <span class="s">"ha soldado antes"</span>
+
+<span class="k">seguridad</span>:
+  red_electrica: <span class="s">true</span>
+  advertencias: [tension-de-red, capacitores-cargados]
+
+<span class="k">conceptos</span>: [regulacion-lineal, realimentacion, disipacion-termica]
+
+<span class="k">materiales</span>:                   <span class="c"># precio por referencia, no escrito aquí</span>
+  - ref: LM317T        cant: 1   nota: encapsulado TO-220
+  - ref: 2N3055        cant: 1
+  - ref: TRAFO-24V-3A  cant: 1
+
+<span class="k">herramientas</span>: [cautin, multimetro, taladro]   <span class="c"># fuera del costo</span>
+
+<span class="k">estado</span>: probado
+<span class="k">probado_por</span>: [claudio]
+<span class="k">actualizado</span>: 2026-08-14
+<span class="k">licencia</span>: CC-BY-SA-4.0
+</pre>
+
+      <p>Dos consecuencias concretas: se puede <strong>validar automáticamente</strong> — si a un proyecto le falta la fecha o tiene un concepto que no existe en el glosario, no publica y avisa por qué; y el filtro por dificultad, costo o concepto sale gratis, porque son datos y no párrafos.</p>
+    </section>
+
+    <section id="costos">
+      <h2><span class="num">§8</span>Cómo hacer que los costos no envejezcan</h2>
+      <p>Lo notaste en el <code>ref:</code> de arriba. La pieza clave es que <strong>el precio no vive dentro del proyecto</strong>, sino en un catálogo de componentes compartido:</p>
+
+      <pre><span class="c">--- datos/componentes.yml ---</span>
+
+<span class="k">LM317T</span>:
+  nombre: Regulador ajustable LM317T
+  precio: 2500
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: <span class="s">"Tienda local — Bogotá"</span>
+  alternativas: [LM350T]
+</pre>
+
+      <p>Actualizas un archivo y se corrigen los veinte proyectos que usan ese regulador. Sobre esa base:</p>
+      <ul class="bullets">
+        <li><strong>Banda en la tarjeta, tabla en el detalle.</strong> «Costo alto (180–260 k)» comunica lo que hace falta para decidir sin fingir una precisión que no existe.</li>
+        <li><strong>Fecha visible siempre.</strong> Y un aviso automático cuando un precio pasa de, digamos, seis meses sin verificar: «precios revisados por última vez en febrero». Honestidad barata que compra mucha credibilidad.</li>
+        <li><strong>Materiales y herramientas por separado.</strong> Sumar el cautín al costo del primer proyecto hace que todo parezca carísimo. Las herramientas se listan aparte y se compran una vez.</li>
+        <li><strong>Alternativas por componente.</strong> Media guía se vuelve inservible si un integrado no se consigue; declarar sustitutos es más valioso que afinar el precio.</li>
+        <li><strong>Una sola moneda al principio.</strong> Convertir automáticamente exige tasas de cambio y mantenimiento. Mejor una moneda base declarada y, si más adelante hace falta, agregar conversión.</li>
+      </ul>
+    </section>
+
+    <section id="taxonomia">
+      <h2><span class="num">§9</span>Las cinco categorías mezclan dos ejes</h2>
+      <p>Una restricción de fondo en la clasificación que propusiste. <strong>Control, Alimentación y Potencia</strong> describen <em>qué hace el circuito</em>. <strong>Audiovisuales y Entretenimiento</strong> describen <em>para qué lo usas</em>. Son dos ejes distintos en la misma lista, y ahí es donde los colaboradores van a archivar distinto entre ellos.</p>
+      <p>Un amplificador de audio, por ejemplo, es Potencia por función y Audiovisuales por uso. Un dimmer con microcontrolador es Control y Potencia. Con un árbol estricto, alguien decide arbitrariamente y el lector no lo encuentra. Y entre Audiovisuales y Entretenimiento la frontera es tan difusa que ni ustedes la van a sostener.</p>
+      <ul class="bullets">
+        <li><strong>Una categoría principal por función</strong> — la que define la URL y el menú. Ahí caben Control, Alimentación y Potencia, más quizá Instrumentación y Comunicación, que son funciones y les faltan.</li>
+        <li><strong>Etiquetas múltiples por aplicación</strong> — audio, iluminación, automotriz, hogar, juegos. Un proyecto puede tener varias y aparece en todas.</li>
+        <li><strong>Reglas de archivo escritas.</strong> Dos frases por categoría diciendo qué entra y qué no. Es lo que evita que en un año la clasificación sea inconsistente.</li>
+      </ul>
+      <p style="margin-top:.9rem">Si prefieres conservar las cinco tal cual en el menú — es una decisión de producto legítima, son nombres atractivos para el visitante — al menos agrega las etiquetas por debajo, para que el descubrimiento no dependa del árbol.</p>
+    </section>
+
+    <section id="comunidad">
+      <h2><span class="num">§10</span>Comentarios: tres niveles de costo</h2>
+      <p>Ordenados de menor a mayor esfuerzo. Mi recomendación es no empezar por el tercero, aunque sea el que uno imagina primero.</p>
+
+      <div class="tw">
+        <table>
+          <thead><tr><th scope="col">Nivel</th><th scope="col">Qué es</th><th scope="col">Qué cuesta</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Sin comentarios</td>
+              <td>Un enlace de «reportar un error o sugerir una mejora» a un formulario o al repositorio.</td>
+              <td>Nada. Y capturas lo más valioso — las correcciones — sin abrir la puerta al spam.</td>
+            </tr>
+            <tr>
+              <td>Comentarios delegados</td>
+              <td>Un sistema como Giscus, que guarda los comentarios en las discusiones del repositorio de GitHub.</td>
+              <td>Gratis, sin base de datos y sin manejar contraseñas ajenas. Requiere cuenta de GitHub para comentar — filtro natural que encaja con tu público, y a la vez la principal desventaja.</td>
+            </tr>
+            <tr>
+              <td>Sistema propio</td>
+              <td>Cuentas, perfiles, notificaciones, fotos de montajes de la comunidad.</td>
+              <td>Backend, base de datos, moderación diaria, datos personales y responsabilidad legal. Solo cuando la comunidad ya exista y lo pida.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Dos consideraciones independientes del nivel</h3>
+      <ul class="bullets">
+        <li><strong>Separa preguntas de reportes de error.</strong> Una pregunta se responde y muere; un reporte de error debe terminar editando la guía. Si van al mismo hilo, las correcciones se pierden en el ruido.</li>
+        <li><strong>Los comentarios son materia prima.</strong> Cada vez que alguien pregunte «se me calienta el transistor», eso pertenece a la sección de fallas comunes. La guía debería mejorar con el uso; si no, terminas respondiendo lo mismo veinte veces.</li>
+      </ul>
+    </section>
+
+    <section id="donaciones">
+      <h2><span class="num">§11</span>Donaciones</h2>
+      <ul class="bullets">
+        <li><strong>No proceses pagos en el sitio.</strong> Un enlace a una plataforma externa evita manejar datos de tarjetas, cumplimiento y toda la superficie de seguridad asociada. Un botón que lleva afuera es el 100% del trabajo.</li>
+        <li><strong>Revisa lo fiscal antes de encender el botón.</strong> Recibir dinero recurrente tiene implicaciones tributarias y varias pasarelas exigen registro formal. No es un tema de la página, pero sí es un requisito previo.</li>
+        <li><strong>Di en qué se gasta.</strong> «Componentes para probar los proyectos y hosting» convierte mejor que un botón pelado, y te protege de expectativas raras.</li>
+        <li><strong>No prometas nada a cambio.</strong> En el momento en que donar implique soporte o contenido exclusivo, dejaste de tener donaciones voluntarias y adquiriste obligaciones.</li>
+        <li><strong>Discreto.</strong> Al pie de la guía y en su propia página. Un modal pidiendo plata sobre un esquemático es la forma más rápida de perder al lector.</li>
+      </ul>
+    </section>
+
+    <section id="seguridad">
+      <h2><span class="num">§12</span>Seguridad, y por qué es estructura y no un aviso</h2>
+      <p>Dos de tus cinco categorías — Alimentación y Potencia — implican tensión de red, capacitores que quedan cargados, baterías de litio y disipación de calor. Con lectores estudiantes y autodidactas, esto no es un detalle de redacción.</p>
+      <ul class="bullets">
+        <li><strong>Bloque de seguridad estandarizado</strong>, con el mismo formato y en la misma posición en todo proyecto que lo requiera: arriba, antes de los materiales. Que el lector aprenda dónde mirar.</li>
+        <li><strong>Advertencias como datos, no como prosa.</strong> Ese <code>advertencias: [tension-de-red, capacitores-cargados]</code> del esquema hace que el aviso se genere solo, con el texto correcto siempre, y permite marcar la tarjeta en el listado.</li>
+        <li><strong>Un descargo de responsabilidad</strong> claro y visible. No te blinda de todo, pero fija expectativas y es lo mínimo razonable al publicar instrucciones que involucran 120&nbsp;V.</li>
+        <li><strong>Licencia explícita del contenido.</strong> Algo como Creative Commons con atribución define qué puede reutilizar la gente, y protege el trabajo de los colaboradores. Sin licencia declarada, nadie sabe qué puede hacer.</li>
+      </ul>
+    </section>
+
+    <section id="taller">
+      <h2><span class="num">§13</span>La comodidad del colaborador es un problema de arquitectura</h2>
+      <p>Preguntaste por la comodidad de ustedes, y esa es la parte donde una decisión técnica temprana se paga o se cobra durante años. El cuello de botella real no va a ser programar: va a ser <em>producir proyectos</em> — armarlos, fotografiarlos, dibujar diagramas, verificar precios. Todo lo que el sistema pueda quitarle de encima a esa tarea, vale.</p>
+      <ul class="bullets">
+        <li><strong>Contenido en archivos dentro del repositorio</strong>, no en una base de datos. Historial, revisión entre colaboradores antes de publicar, y nada que se pierda si un servicio cierra.</li>
+        <li><strong>Un sitio estático.</strong> Se publica gratis, aguanta cualquier pico de visitas, no hay servidor que actualizar ni que puedan vulnerar. Para un catálogo de guías es la elección obvia.</li>
+        <li><strong>Un editor visual para quien no use Git.</strong> Existen editores que escriben en el mismo repositorio desde una interfaz con formularios. Así el colaborador que arma circuitos pero no toca la terminal puede publicar igual.</li>
+        <li><strong>Una plantilla y una lista de verificación.</strong> Un proyecto nuevo se crea copiando un archivo con todos los campos vacíos y comentados. Reduce el «no sé por dónde empezar», que es la razón número uno por la que los colaboradores no publican.</li>
+        <li><strong>Validación automática antes de publicar.</strong> Campos faltantes, conceptos inexistentes, imágenes demasiado pesadas, enlaces rotos. Que lo revise la máquina y no el compañero.</li>
+        <li><strong>Reglas para las fotos.</strong> Es el activo más pesado del sitio. Tamaño máximo, formatos modernos, carga diferida y nombres consistentes. Definirlo una vez ahorra rehacer cien imágenes después.</li>
+        <li><strong>Estados de publicación.</strong> Borrador, en revisión, publicado, obsoleto. Permite tener trabajo a medias sin miedo a que salga al aire, y retirar con dignidad un proyecto que dejó de funcionar.</li>
+      </ul>
+    </section>
+
+    <section id="fases">
+      <h2><span class="num">§14</span>Por dónde empezar</h2>
+      <p>El error clásico es construir las cinco categorías, el sistema de comentarios y las donaciones antes de tener contenido. <strong>Ocho proyectos excelentes valen más que cuarenta esbozados</strong>, y el sitio no se juzga por sus funciones sino por la primera guía que alguien intenta seguir.</p>
+      <div class="phases">
+        <div class="phase">
+          <span class="ph">Primero</span>
+          <h3>Que sirva</h3>
+          <ul>
+            <li>Listado y detalle, sin más</li>
+            <li>Una categoría, cinco a ocho proyectos probados</li>
+            <li>Esquema de datos y catálogo de componentes</li>
+            <li>Sin comentarios ni donaciones</li>
+            <li>Enlace de «reportar un error»</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="ph">Después</span>
+          <h3>Que se navegue</h3>
+          <ul>
+            <li>Las cinco categorías y las etiquetas</li>
+            <li>Filtros y buscador</li>
+            <li>Fichas de concepto y glosario</li>
+            <li>Modo banco</li>
+            <li>Comentarios delegados</li>
+          </ul>
+        </div>
+        <div class="phase">
+          <span class="ph">Cuando haya público</span>
+          <h3>Que crezca</h3>
+          <ul>
+            <li>Donaciones</li>
+            <li>Editor visual para colaboradores</li>
+            <li>Montajes enviados por la comunidad</li>
+            <li>Perfiles y créditos ampliados</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="decisiones">
+      <h2><span class="num">§15</span>Lo que necesito que decidas</h2>
+      <p>Cinco preguntas que cambian lo que se construye. Dejo mi inclinación en cada una para que solo tengas que confirmar o corregir.</p>
+
+      <div class="q">
+        <span class="ask">¿Los colaboradores usan Git o necesitan una interfaz visual?</span>
+        <span class="lean">Define todo lo demás. <b>Asumo que sí usan Git al principio</b> y que el editor visual llega en la fase 3, salvo que ya sepas de gente que aportaría y no programa.</span>
+      </div>
+      <div class="q">
+        <span class="ask">¿Moneda y país de referencia para los precios?</span>
+        <span class="lean"><b>Asumo pesos colombianos</b> con la fecha de verificación visible. Cambia el catálogo de componentes y el texto de los avisos.</span>
+      </div>
+      <div class="q">
+        <span class="ask">¿Se conserva la clasificación de cinco categorías como está?</span>
+        <span class="lean"><b>Mi recomendación es conservarla en el menú</b> — son nombres claros para el visitante — y agregar etiquetas por debajo para resolver los proyectos que caen en dos.</span>
+      </div>
+      <div class="q">
+        <span class="ask">¿Entramos con comentarios desde el primer día?</span>
+        <span class="lean"><b>Mi recomendación es no.</b> Empezar con el enlace de reporte y sumar comentarios delegados cuando haya lectores que comenten.</span>
+      </div>
+      <div class="q">
+        <span class="ask">¿Qué proyecto sirve de piloto?</span>
+        <span class="lean">Uno solo, completo hasta la última foto, es lo que valida el esquema de datos. <b>Prefiero uno de dificultad media</b>: los triviales no ejercitan la estructura y los complejos tardan meses.</span>
+      </div>
+
+      <p class="endnote">Documento de trabajo · Se actualiza a medida que se cierran las decisiones de §15</p>
+    </section>
+
+  </main>
+</div>

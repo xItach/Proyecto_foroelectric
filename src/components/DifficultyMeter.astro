@@ -1,0 +1,49 @@
+---
+interface Props {
+  nivel: 1 | 2 | 3 | 4 | 5;
+  etiqueta: string;
+  compacto?: boolean;
+}
+
+const { nivel, etiqueta, compacto = false } = Astro.props;
+---
+
+<span class:list={["medidor", { compacto }]}>
+  <span class="valor">{nivel} / 5</span>
+  <span class="barras" aria-hidden="true">
+    {Array.from({ length: 5 }).map((_, i) => <i class:list={{ llena: i < nivel }} />)}
+  </span>
+  {!compacto && <span class="etiqueta">{etiqueta}</span>}
+</span>
+
+<style>
+  .medidor {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--sans);
+    font-size: 0.82rem;
+    font-weight: 640;
+    font-variant-numeric: tabular-nums;
+  }
+  .barras {
+    display: inline-flex;
+    gap: 2px;
+  }
+  .barras i {
+    width: 5px;
+    height: 9px;
+    background: var(--rule-strong);
+    display: block;
+  }
+  .barras i.llena {
+    background: var(--accent);
+  }
+  .etiqueta {
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  .compacto {
+    font-size: 0.78rem;
+  }
+</style>

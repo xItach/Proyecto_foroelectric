@@ -1,0 +1,22 @@
+---
+interface Props {
+  redElectrica: boolean;
+  compacto?: boolean;
+}
+
+const { redElectrica, compacto = false } = Astro.props;
+---
+
+{
+  redElectrica && (
+    <span class:list={["badge-riesgo", { compacto }]}>
+      ⚠ {compacto ? "Red 120 V" : "Conecta a tensión de red"}
+    </span>
+  )
+}
+
+<style>
+  .compacto {
+    font-size: 0.6rem;
+  }
+</style>

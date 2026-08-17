@@ -1,0 +1,46 @@
+# Glosario de conceptos — vocabulario controlado. Cada proyecto enlaza a estas
+# fichas en vez de reescribir la teoría; dentro del proyecto solo se explica
+# cómo se aplica ese concepto en ese circuito puntual.
+
+- id: ley-de-ohm
+  nombre: Ley de Ohm
+  resumen: >
+    Relaciona voltaje, corriente y resistencia en un elemento resistivo:
+    V = I × R. Es la base para calcular resistencias limitadoras, caídas de
+    tensión y disipación de potencia en un circuito.
+
+- id: regulacion-lineal
+  nombre: Regulación lineal
+  resumen: >
+    Un regulador lineal mantiene una tensión de salida constante disipando
+    el exceso de energía como calor. Es simple y de bajo ruido, pero
+    ineficiente cuando la diferencia entre entrada y salida es grande.
+
+- id: realimentacion
+  nombre: Realimentación (negativa)
+  resumen: >
+    Parte de la salida de un circuito se compara con una referencia y el
+    resultado ajusta la entrada para corregir el error. Es lo que permite
+    que un regulador o un amplificador mantengan un valor estable pese a
+    variaciones de carga o temperatura.
+
+- id: disipacion-termica
+  nombre: Disipación térmica
+  resumen: >
+    Todo componente que conduce corriente con una caída de tensión disipa
+    potencia como calor (P = V × I). Superado el límite del encapsulado,
+    ese calor se saca con un disipador para evitar que el componente falle.
+
+- id: astable
+  nombre: Circuito astable
+  resumen: >
+    Un circuito que oscila permanentemente entre dos estados sin necesidad
+    de un disparo externo, generando una señal periódica. El 555 en modo
+    astable es el ejemplo clásico para producir pulsos o parpadeo.
+
+- id: constante-rc
+  nombre: Constante de tiempo RC
+  resumen: >
+    El producto τ = R × C determina cuánto tarda un capacitor en cargarse o
+    descargarse a través de una resistencia. Define la frecuencia o el
+    tiempo de un circuito temporizador.

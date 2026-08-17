@@ -1,0 +1,189 @@
+# Editor visual (Decap CMS) para colaboradores que prefieren no usar Git
+# directamente. Ver README.md → "Publicar sin usar Git" para cómo correrlo.
+#
+# Por ahora solo administra la colección de proyectos — es donde está el
+# cuello de botella real. El catálogo de componentes (componentes.yaml) y el
+# glosario (conceptos.yaml) se editan directamente por ahora: son archivos
+# cortos, cambian poco, y su formato (lista con `id`) es el que necesita el
+# sitio para calcular costos — no coincide con el formato que Decap espera
+# para "colecciones de archivo", así que mezclarlos aquí los rompería.
+
+backend:
+  name: github
+  repo: xItach/Proyecto_foroelectric
+  branch: main # cambiar si la rama principal del sitio publicado es otra
+
+# Con esto activo y corriendo `npx decap-server` en paralelo a `npm run dev`,
+# el editor visual funciona en localhost sin configurar OAuth de GitHub.
+# Para producción hay que registrar una GitHub OAuth App (o usar Netlify /
+# Cloudflare Pages, que lo resuelven solo) — ver README.md.
+local_backend: true
+
+publish_mode: simple
+media_folder: "public/imagenes/proyectos"
+public_folder: "/imagenes/proyectos"
+
+collections:
+  - name: "proyectos"
+    label: "Proyectos"
+    label_singular: "Proyecto"
+    folder: "src/content/proyectos"
+    create: true
+    slug: "{{slug}}"
+    path: "{{categoria}}/{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    identifier_field: titulo
+    fields:
+      - { label: "Título", name: "titulo", widget: "string" }
+      - { label: "Propósito (una línea)", name: "proposito", widget: "string", pattern: ['^.{1,220}$', "Máximo 220 caracteres"] }
+      - label: "Categoría"
+        name: "categoria"
+        widget: "select"
+        options:
+          - { label: "Control", value: "control" }
+          - { label: "Alimentación", value: "alimentacion" }
+          - { label: "Potencia", value: "potencia" }
+          - { label: "Audiovisuales", value: "audiovisuales" }
+          - { label: "Entretenimiento", value: "entretenimiento" }
+      - { label: "Etiquetas", name: "etiquetas", widget: "list", default: [] }
+
+      - label: "Dificultad (rúbrica de 6 ejes, 0 a 2 cada uno)"
+        name: "dificultad"
+        widget: "object"
+        fields:
+          - { label: "Componentes (0: <15 · 1: 15–40 · 2: >40)", name: "componentes", widget: "number", value_type: "int", min: 0, max: 2 }
+          - { label: "Montaje (0: protoboard · 1: perfboard/PCB · 2: SMD/mecanizado)", name: "montaje", widget: "number", value_type: "int", min: 0, max: 2 }
+          - { label: "Instrumentación (0: ninguna · 1: multímetro · 2: osciloscopio/generador)", name: "instrumentacion", widget: "number", value_type: "int", min: 0, max: 2 }
+          - { label: "Programación (0: no lleva · 1: firmware listo · 2: hay que escribir código)", name: "programacion", widget: "number", value_type: "int", min: 0, max: 2 }
+          - { label: "Riesgo eléctrico (0: ≤24V DC · 1: litio/>1A · 2: red eléctrica)", name: "riesgo_electrico", widget: "number", value_type: "int", min: 0, max: 2 }
+          - { label: "Ajuste y calibración (0: funciona al conectar · 1: ajuste simple · 2: caracterización)", name: "calibracion", widget: "number", value_type: "int", min: 0, max: 2 }
+
+      - label: "Tiempo de montaje"
+        name: "tiempo"
+        widget: "object"
+        fields:
+          - { label: "Horas (mínimo)", name: "horas_min", widget: "number" }
+          - { label: "Horas (máximo)", name: "horas_max", widget: "number" }
+          - { label: "Sesiones", name: "sesiones", widget: "number", value_type: "int" }
+          - { label: "Perfil (a quién aplica el tiempo)", name: "perfil", widget: "string", hint: 'Ej: "ha soldado antes"' }
+
+      - label: "Seguridad"
+        name: "seguridad"
+        widget: "object"
+        fields:
+          - { label: "¿Conecta a red eléctrica (120/240 V)?", name: "red_electrica", widget: "boolean", default: false }
+          - label: "Advertencias adicionales"
+            name: "advertencias"
+            widget: "select"
+            multiple: true
+            required: false
+            default: []
+            options:
+              - { label: "Capacitores cargados tras desconectar", value: "capacitores-cargados" }
+              - { label: "Batería de litio", value: "bateria-litio" }
+              - { label: "Superficie caliente", value: "superficie-caliente" }
+              - { label: "Corriente alta (>1 A)", value: "corriente-alta" }
+
+      - label: "Conceptos previos"
+        name: "conceptos"
+        widget: "list"
+        required: false
+        default: []
+        fields:
+          - label: "Concepto"
+            name: "slug"
+            widget: "select"
+            hint: "Debe existir en src/content/conceptos.yaml"
+            options:
+              - { label: "Ley de Ohm", value: "ley-de-ohm" }
+              - { label: "Regulación lineal", value: "regulacion-lineal" }
+              - { label: "Realimentación", value: "realimentacion" }
+              - { label: "Disipación térmica", value: "disipacion-termica" }
+              - { label: "Circuito astable", value: "astable" }
+              - { label: "Constante de tiempo RC", value: "constante-rc" }
+          - { label: "Aplicación en este proyecto (2–3 líneas)", name: "nota", widget: "text" }
+
+      - label: "Materiales"
+        name: "materiales"
+        widget: "list"
+        fields:
+          - { label: "Referencia", name: "ref", widget: "string", hint: "Debe existir en src/content/componentes.yaml" }
+          - { label: "Cantidad", name: "cantidad", widget: "number", value_type: "int", default: 1 }
+          - { label: "Nota", name: "nota", widget: "string", required: false }
+
+      - { label: "Herramientas (no entran al costo)", name: "herramientas", widget: "list", required: false, default: [] }
+
+      - label: "Material de apoyo"
+        name: "apoyo"
+        widget: "list"
+        required: false
+        default: []
+        fields:
+          - { label: "Título", name: "titulo", widget: "string" }
+          - { label: "URL", name: "url", widget: "string" }
+          - label: "Tipo"
+            name: "tipo"
+            widget: "select"
+            default: "enlace"
+            options: ["enlace", "pdf", "video", "datasheet"]
+
+      - label: "Fotos del montaje"
+        name: "imagenes"
+        widget: "list"
+        required: false
+        default: []
+        fields:
+          - { label: "Descripción (alt)", name: "alt", widget: "string" }
+          - { label: "Imagen", name: "src", widget: "image", required: false }
+
+      - label: "Diagramas eléctricos"
+        name: "diagramas"
+        widget: "list"
+        required: false
+        default: []
+        fields:
+          - { label: "Título", name: "titulo", widget: "string" }
+          - { label: "Descripción (alt)", name: "alt", widget: "string" }
+          - { label: "Imagen del diagrama", name: "src", widget: "image", required: false }
+
+      - label: "Procedimiento de montaje"
+        name: "pasos"
+        widget: "list"
+        required: false
+        default: []
+        fields:
+          - { label: "Título del paso", name: "titulo", widget: "string" }
+          - { label: "Qué hacer", name: "contenido", widget: "text" }
+          - { label: "Punto de verificación (medible)", name: "verificacion", widget: "string", required: false }
+
+      - label: "Resultados esperados"
+        name: "resultados"
+        widget: "list"
+        required: false
+        default: []
+        fields:
+          - { label: "Parámetro", name: "parametro", widget: "string" }
+          - { label: "Valor esperado", name: "esperado", widget: "string" }
+
+      - label: "Fallas comunes"
+        name: "fallas"
+        widget: "list"
+        required: false
+        default: []
+        fields:
+          - { label: "Síntoma", name: "sintoma", widget: "string" }
+          - { label: "Causas probables", name: "causas", widget: "list" }
+
+      - { label: "Notas del colaborador", name: "notas_colaborador", widget: "text", required: false }
+
+      - label: "Estado"
+        name: "estado"
+        widget: "select"
+        default: "borrador"
+        options: ["borrador", "revision", "publicado", "obsoleto"]
+      - { label: "Probado por", name: "probado_por", widget: "list", required: false, default: [] }
+      - { label: "Actualizado", name: "actualizado", widget: "datetime", format: "YYYY-MM-DD", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Licencia", name: "licencia", widget: "string", default: "CC-BY-SA-4.0" }
+
+      - { label: "Introducción", name: "body", widget: "markdown" }

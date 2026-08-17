@@ -1,0 +1,191 @@
+---
+import { categorias } from "../data/categorias";
+
+const rutaActual = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container bar">
+    <a href="/" class="marca">
+      <span class="marca-icono" aria-hidden="true">⏚</span>
+      Foro Electric
+    </a>
+
+    <details class="menu-movil">
+      <summary>Menú<span class="visually-hidden"> de navegación</span></summary>
+      <nav aria-label="Principal">
+        <p class="grupo-titulo">Proyectos</p>
+        <ul>
+          {
+            categorias.map((c) => (
+              <li>
+                <a href={`/categoria/${c.slug}`} aria-current={rutaActual.startsWith(`/categoria/${c.slug}`) ? "page" : undefined}>
+                  {c.nombre}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <ul class="secundario">
+          <li><a href="/donaciones">Donaciones</a></li>
+          <li><a href="/equipo">Equipo</a></li>
+        </ul>
+      </nav>
+    </details>
+
+    <nav class="nav-escritorio" aria-label="Principal">
+      <ul>
+        {
+          categorias.map((c) => (
+            <li>
+              <a href={`/categoria/${c.slug}`} aria-current={rutaActual.startsWith(`/categoria/${c.slug}`) ? "page" : undefined}>
+                {c.nombre}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <span class="divisor" aria-hidden="true"></span>
+      <ul>
+        <li><a href="/donaciones">Donaciones</a></li>
+        <li><a href="/equipo">Equipo</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1rem;
+  }
+  .marca {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--sans);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-size: 1.05rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .marca-icono {
+    color: var(--accent);
+    font-size: 1.2rem;
+  }
+
+  .nav-escritorio {
+    display: none;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .nav-escritorio ul {
+    list-style: none;
+    display: flex;
+    gap: 1.4rem;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-escritorio a {
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    text-decoration: none;
+    padding-block: 0.25rem;
+    border-bottom: 2px solid transparent;
+  }
+  .nav-escritorio a:hover,
+  .nav-escritorio a[aria-current="page"] {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .divisor {
+    width: 1px;
+    height: 1.1rem;
+    background: var(--rule-strong);
+  }
+
+  .menu-movil {
+    position: relative;
+  }
+  .menu-movil summary {
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 650;
+    font-size: 0.88rem;
+    border: 1px solid var(--rule-strong);
+    padding: 0.45rem 0.8rem;
+    border-radius: 3px;
+    color: var(--ink);
+  }
+  .menu-movil summary::-webkit-details-marker {
+    display: none;
+  }
+  .menu-movil[open] summary {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .menu-movil nav {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    box-shadow: var(--shadow);
+    padding: 1rem;
+    min-width: 12rem;
+  }
+  .grupo-titulo {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.5rem;
+  }
+  .menu-movil ul {
+    list-style: none;
+    margin: 0 0 0.75rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .menu-movil .secundario {
+    margin: 0;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--rule);
+  }
+  .menu-movil a {
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .menu-movil a[aria-current="page"] {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  @media (min-width: 860px) {
+    .nav-escritorio {
+      display: flex;
+    }
+    .menu-movil {
+      display: none;
+    }
+  }
+</style>

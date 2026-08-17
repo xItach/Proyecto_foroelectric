@@ -1,0 +1,114 @@
+---
+import { categorias } from "../data/categorias";
+
+// Placeholder: reemplazar por el formulario real (Google Forms, Typeform,
+// o un issue template del repositorio) cuando exista. Ver decisión §15:
+// sin comentarios por ahora, solo reporte de errores.
+const URL_REPORTAR_ERROR = "https://github.com/xItach/Proyecto_foroelectric/issues/new";
+---
+
+<footer class="site-footer">
+  <div class="container grid">
+    <div class="col-marca">
+      <p class="marca">⏚ Foro Electric</p>
+      <p class="descripcion">
+        Guías de montaje electrónico para entusiastas, estudiantes y cualquiera con curiosidad
+        por entender, dimensionar y armar un circuito.
+      </p>
+    </div>
+
+    <nav class="col" aria-label="Categorías">
+      <p class="titulo">Proyectos</p>
+      <ul>
+        {categorias.map((c) => <li><a href={`/categoria/${c.slug}`}>{c.nombre}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav class="col" aria-label="Sitio">
+      <p class="titulo">Sitio</p>
+      <ul>
+        <li><a href="/equipo">Equipo</a></li>
+        <li><a href="/donaciones">Donaciones</a></li>
+        <li><a href={URL_REPORTAR_ERROR}>Reportar un error</a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="container licencia">
+    <p>
+      El contenido de cada guía se publica bajo la licencia indicada en su propia ficha
+      (por defecto, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.es">CC BY-SA 4.0</a>).
+      Verifica siempre las conexiones antes de energizar un circuito — ni el sitio ni sus
+      colaboradores se hacen responsables por el mal uso de estas guías.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--rule);
+    background: var(--surface-2);
+    margin-top: 5rem;
+    padding-block: 3rem 1.5rem;
+  }
+  .grid {
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 720px) {
+    .grid {
+      grid-template-columns: 1.4fr 1fr 1fr;
+    }
+  }
+  .col-marca .marca {
+    font-family: var(--sans);
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 0.6rem;
+  }
+  .descripcion {
+    max-width: 34ch;
+    font-size: 0.92rem;
+    color: var(--ink-2);
+  }
+  .col .titulo {
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: 0.75rem;
+  }
+  .col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+  }
+  .col a {
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    color: var(--ink-2);
+    text-decoration: none;
+  }
+  .col a:hover {
+    color: var(--accent);
+  }
+  .licencia {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .licencia p {
+    max-width: 68ch;
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+  .licencia a {
+    color: var(--ink-2);
+  }
+</style>

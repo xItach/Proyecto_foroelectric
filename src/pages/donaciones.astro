@@ -1,0 +1,99 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// Placeholder: reemplazar por el enlace real de la plataforma de donación
+// elegida (Ko-fi, Buy Me a Coffee, etc.) una vez esté definida.
+const URL_DONACION = "#";
+---
+
+<BaseLayout
+  title="Donaciones"
+  description="Cómo apoyar voluntariamente el mantenimiento de Foro Electric."
+>
+  <section class="pagina">
+    <div class="container angosto">
+      <p class="eyebrow">Sostenimiento</p>
+      <h1>Donaciones voluntarias</h1>
+      <p class="lead">
+        Foro Electric no vende nada ni cobra por leer una guía. Se mantiene con el tiempo de
+        quienes colaboran y un presupuesto pequeño para comprar los componentes que se usan al
+        probar cada proyecto antes de publicarlo.
+      </p>
+
+      <div class="bloque">
+        <h2>¿En qué se usa?</h2>
+        <ul>
+          <li>Componentes y herramientas para probar físicamente los proyectos antes de publicarlos.</li>
+          <li>Hosting y dominio del sitio.</li>
+          <li>Tiempo de edición: fotografía, diagramas y revisión técnica de cada guía.</li>
+        </ul>
+      </div>
+
+      <div class="bloque">
+        <h2>Qué no ofrecemos a cambio</h2>
+        <p>
+          No hay contenido exclusivo, soporte prioritario ni ninguna contraprestación por donar.
+          Todas las guías son gratuitas y lo seguirán siendo — donar es solo una forma de decir
+          que una guía te sirvió.
+        </p>
+      </div>
+
+      <a class="btn btn-primary" href={URL_DONACION}>Ir a la plataforma de donación</a>
+      <p class="nota">
+        Este enlace es un marcador de posición: se activa cuando el equipo defina la plataforma
+        de donación definitiva.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pagina {
+    padding-block: 3.5rem 5rem;
+  }
+  .angosto {
+    max-width: 42rem;
+  }
+  h1 {
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    margin-top: 0.5rem;
+  }
+  .lead {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-top: 1.2rem;
+  }
+  .bloque {
+    margin-top: 2.25rem;
+  }
+  .bloque h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.7rem;
+  }
+  .bloque p {
+    font-family: var(--serif);
+    color: var(--ink-2);
+    line-height: 1.6;
+  }
+  .bloque ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    font-family: var(--serif);
+    color: var(--ink-2);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .btn {
+    margin-top: 2.25rem;
+  }
+  .nota {
+    margin-top: 0.75rem;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+  }
+</style>

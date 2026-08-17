@@ -1,0 +1,131 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { equipo } from "../data/equipo";
+---
+
+<BaseLayout
+  title="Equipo"
+  description="Quiénes escriben, prueban y publican las guías de Foro Electric."
+>
+  <section class="pagina">
+    <div class="container angosto">
+      <p class="eyebrow">Quiénes hacemos esto</p>
+      <h1>El equipo</h1>
+      <p class="lead">
+        Cada guía la arma, fotografía y prueba una persona real antes de publicarse — nadie
+        publica un proyecto que no haya montado con sus propias manos.
+      </p>
+
+      <ul class="lista">
+        {
+          equipo.map((c) => (
+            <li>
+              <div class="avatar" aria-hidden="true">{c.nombre.charAt(0)}</div>
+              <div>
+                <p class="nombre">{c.nombre}</p>
+                <p class="rol">{c.rol}</p>
+                <p class="bio">{c.bio}</p>
+                {c.enlace && <a href={c.enlace}>{c.enlace.replace(/^https?:\/\//, "")}</a>}
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="colabora">
+        <h2>¿Quieres colaborar?</h2>
+        <p>
+          Si armas y documentas un proyecto propio con fotos, materiales y diagrama, puede
+          convertirse en una guía. Ábrenos una propuesta en el repositorio del sitio.
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pagina {
+    padding-block: 3.5rem 5rem;
+  }
+  .angosto {
+    max-width: 42rem;
+  }
+  h1 {
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    margin-top: 0.5rem;
+  }
+  .lead {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-top: 1.2rem;
+  }
+  .lista {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+  .lista li {
+    display: grid;
+    grid-template-columns: 3.2rem 1fr;
+    gap: 1rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--rule);
+  }
+  .lista li:first-child {
+    padding-top: 0;
+    border-top: none;
+  }
+  .avatar {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+  .nombre {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 1.05rem;
+  }
+  .rol {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-top: 0.2rem;
+  }
+  .bio {
+    font-family: var(--serif);
+    color: var(--ink-2);
+    line-height: 1.55;
+    margin-top: 0.6rem;
+    max-width: 52ch;
+  }
+  .colabora {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+  }
+  .colabora h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.7rem;
+  }
+  .colabora p {
+    font-family: var(--serif);
+    color: var(--ink-2);
+    line-height: 1.6;
+    max-width: 52ch;
+  }
+</style>

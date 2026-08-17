@@ -1,0 +1,149 @@
+# Catálogo de componentes — precio único por referencia, reutilizado por todos
+# los proyectos que la usan. Actualiza aquí y se corrige en todas las guías.
+#
+# Moneda de referencia: COP. `verificado` es la fecha de la última revisión
+# de precio; una guía avisa automáticamente si pasa de 6 meses sin revisar.
+
+- id: LM317T
+  nombre: Regulador de voltaje ajustable LM317T (TO-220)
+  precio: 2500
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: [LM350T]
+
+- id: 2N3055
+  nombre: Transistor de potencia NPN 2N3055 (TO-3)
+  precio: 6800
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: [TIP3055]
+
+- id: TRAFO-24V-3A
+  nombre: Transformador 24 V CT / 3 A
+  precio: 65000
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: NE555
+  nombre: Temporizador NE555 (DIP-8)
+  precio: 1500
+  moneda: COP
+  verificado: 2026-08-05
+  fuente: Tienda local — Bogotá
+  alternativas: [LM555, ICM7555]
+
+- id: LED-5MM-ROJO
+  nombre: LED 5 mm rojo difuso
+  precio: 300
+  moneda: COP
+  verificado: 2026-08-05
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: RES-CARBON-1-4W
+  nombre: "Resistencia de carbón 1/4 W (surtido por unidad)"
+  precio: 100
+  moneda: COP
+  verificado: 2026-08-05
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: CAP-CERAMICO-100NF
+  nombre: Capacitor cerámico 100 nF
+  precio: 250
+  moneda: COP
+  verificado: 2026-08-05
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: PROTOBOARD-830
+  nombre: Protoboard 830 puntos
+  precio: 12000
+  moneda: COP
+  verificado: 2026-07-20
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: CABLES-JUMPER-M-M
+  nombre: "Kit de cables jumper macho-macho (x40)"
+  precio: 6000
+  moneda: COP
+  verificado: 2026-07-20
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: PUENTE-RECTIFICADOR-4A
+  nombre: Puente rectificador 4 A
+  precio: 4500
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: CAP-ELECTROLITICO-2200UF-50V
+  nombre: Capacitor electrolítico 2200 µF / 50 V
+  precio: 3800
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: CAP-ELECTROLITICO-1UF-50V
+  nombre: Capacitor electrolítico 1 µF / 50 V
+  precio: 500
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: POT-5K-LINEAL
+  nombre: Potenciómetro lineal 5 kΩ con eje
+  precio: 4500
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: DISIPADOR-TO3
+  nombre: Disipador de aluminio para encapsulado TO-3
+  precio: 9000
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: PORTAFUSIBLE-CHASIS
+  nombre: Portafusible de chasis + fusible 3 A
+  precio: 3500
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: BORNERAS-BANANA-PAR
+  nombre: Par de borneras tipo banana (rojo / negro)
+  precio: 5000
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: CHASIS-METALICO-PEQUENO
+  nombre: Chasis metálico pequeño perforable
+  precio: 28000
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []
+
+- id: PERFBOARD-5X7
+  nombre: Perfboard 5 × 7 cm
+  precio: 3500
+  moneda: COP
+  verificado: 2026-08-10
+  fuente: Tienda local — Bogotá
+  alternativas: []

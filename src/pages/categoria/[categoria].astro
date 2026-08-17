@@ -1,0 +1,110 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import FilterBar from "../../components/FilterBar.astro";
+import { categorias, categoriaPorSlug } from "../../data/categorias";
+import { getCollection } from "astro:content";
+import type { ComponenteCatalogo } from "../../utils/costos";
+
+export async function getStaticPaths() {
+  return categorias.map((c) => ({ params: { categoria: c.slug } }));
+}
+
+const { categoria: slug } = Astro.params;
+const categoria = categoriaPorSlug(slug)!;
+
+const todosLosProyectos = await getCollection("proyectos");
+const proyectos = todosLosProyectos
+  .filter((p) => p.data.categoria === slug)
+  .sort((a, b) => b.data.actualizado.getTime() - a.data.actualizado.getTime());
+
+const componentesEntradas = await getCollection("componentes");
+const catalogo = new Map<string, ComponenteCatalogo>(
+  componentesEntradas.map((c) => [c.id, c.data as ComponenteCatalogo]),
+);
+
+const conceptosEntradas = await getCollection("conceptos");
+const conceptosMap = new Map(conceptosEntradas.map((c) => [c.id, c.data.nombre]));
+
+const conceptosUsados = [
+  ...new Set(proyectos.flatMap((p) => p.data.conceptos.map((c) => c.slug))),
+]
+  .map((slug) => ({ slug, nombre: conceptosMap.get(slug) ?? slug }))
+  .sort((a, b) => a.nombre.localeCompare(b.nombre));
+---
+
+<BaseLayout title={categoria.nombre} description={categoria.descripcion}>
+  <section class="cabecera">
+    <div class="container">
+      <p class="eyebrow">Proyectos / {categoria.nombre}</p>
+      <h1>{categoria.nombre}</h1>
+      <p class="desc">{categoria.descripcion}</p>
+    </div>
+  </section>
+
+  <section class="listado">
+    <div class="container">
+      <FilterBar conceptos={conceptosUsados} />
+
+      {
+        proyectos.length > 0 ? (
+          <div class="grid" data-grid-proyectos>
+            {proyectos.map((p) => <ProjectCard proyecto={p} catalogo={catalogo} />)}
+          </div>
+        ) : (
+          <p class="vacio">
+            Todavía no hay proyectos publicados en esta categoría. Si tienes uno montado y
+            probado, puedes proponerlo — ver <a href="/equipo">cómo colaborar</a>.
+          </p>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cabecera {
+    padding-block: 3rem 1rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .cabecera h1 {
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    margin-top: 0.5rem;
+  }
+  .cabecera .desc {
+    font-family: var(--serif);
+    color: var(--ink-2);
+    max-width: 56ch;
+    margin-top: 0.8rem;
+    font-size: 1.02rem;
+  }
+
+  .listado {
+    padding-block: 2rem 4rem;
+  }
+  .grid {
+    display: grid;
+    gap: 1.1rem;
+    margin-top: 1.75rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 680px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1080px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .vacio {
+    font-family: var(--serif);
+    color: var(--ink-2);
+    padding: 2.5rem 0;
+    max-width: 52ch;
+  }
+  .vacio a {
+    color: var(--accent);
+  }
+</style>

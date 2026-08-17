@@ -1,0 +1,189 @@
+---
+import type { CollectionEntry } from "astro:content";
+import DifficultyMeter from "./DifficultyMeter.astro";
+import RiskBadge from "./RiskBadge.astro";
+import { calcularDificultad } from "../utils/dificultad";
+import { calcularCosto, formatoCOP, ETIQUETA_BANDA, type ComponenteCatalogo } from "../utils/costos";
+
+interface Props {
+  proyecto: CollectionEntry<"proyectos">;
+  catalogo: Map<string, ComponenteCatalogo>;
+}
+
+const { proyecto, catalogo } = Astro.props;
+const p = proyecto.data;
+
+const dificultad = calcularDificultad(p.dificultad);
+const costo = calcularCosto(p.materiales, catalogo);
+
+const ESTADO_LABEL: Record<string, string> = {
+  borrador: "Borrador",
+  revision: "En revisión",
+  publicado: "Probado",
+  obsoleto: "Obsoleto",
+};
+
+const fecha = new Intl.DateTimeFormat("es-CO", { month: "short", year: "numeric" }).format(
+  p.actualizado,
+);
+---
+
+<article
+  class="card"
+  data-dificultad={dificultad.nivel}
+  data-tiempo-max={p.tiempo.horas_max}
+  data-banda={costo.banda}
+  data-riesgo={p.seguridad.red_electrica ? "1" : "0"}
+  data-etiquetas={[...p.etiquetas, p.categoria].join(",")}
+  data-conceptos={p.conceptos.map((c) => c.slug).join(",")}
+>
+  <a class="thumb" href={`/proyecto/${proyecto.id}`} aria-hidden="true" tabindex="-1">
+    <RiskBadge redElectrica={p.seguridad.red_electrica} compacto />
+    {p.imagenes.length > 0 && <span class="count">{p.imagenes.length} fotos</span>}
+  </a>
+  <div class="card-body">
+    <span class="cat">{p.categoria}</span>
+    <h3><a href={`/proyecto/${proyecto.id}`}>{p.titulo}</a></h3>
+    <p class="sub">{p.proposito}</p>
+
+    <div class="specs">
+      <div class="spec">
+        <span class="lbl">Dificultad</span>
+        <DifficultyMeter nivel={dificultad.nivel} etiqueta={dificultad.etiqueta} compacto />
+      </div>
+      <div class="spec">
+        <span class="lbl">Tiempo</span>
+        <span class="val">{p.tiempo.horas_min}–{p.tiempo.horas_max} h · {p.tiempo.sesiones} sesiones</span>
+      </div>
+      <div class="spec">
+        <span class="lbl">Costo</span>
+        <span class="val">{ETIQUETA_BANDA[costo.banda]} · {formatoCOP(costo.totalMin)}–{formatoCOP(costo.totalMax)}</span>
+      </div>
+      <div class="spec">
+        <span class="lbl">Herramientas</span>
+        <span class="val">{p.herramientas.length > 0 ? p.herramientas.join(", ") : "Ninguna"}</span>
+      </div>
+    </div>
+
+    {
+      p.etiquetas.length > 0 && (
+        <div class="tags">
+          {p.etiquetas.map((t) => <span class="tag">{t}</span>)}
+        </div>
+      )
+    }
+
+    <div class="foot">
+      <span class={`estado estado-${p.estado}`}>● {ESTADO_LABEL[p.estado]}</span>
+      <span>Actualizado {fecha}</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+  }
+  .thumb {
+    aspect-ratio: 16 / 10;
+    background: repeating-linear-gradient(135deg, var(--surface-2) 0 8px, transparent 8px 16px),
+      var(--accent-soft);
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0.5rem;
+  }
+  .thumb .count {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 0.2rem 0.4rem;
+    border-radius: 2px;
+    margin-left: auto;
+  }
+  .card-body {
+    padding: 0.95rem 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .cat {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--copper);
+  }
+  .card h3 {
+    font-size: 1rem;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+  }
+  .card h3 a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .card h3 a:hover {
+    color: var(--accent);
+  }
+  .sub {
+    font-family: var(--serif);
+    font-size: 0.85rem;
+    color: var(--ink-2);
+    line-height: 1.45;
+  }
+  .specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem 0.75rem;
+    padding: 0.7rem 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .spec .lbl {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    display: block;
+    margin-bottom: 0.15rem;
+  }
+  .spec .val {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .foot {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--ink-3);
+    letter-spacing: 0.05em;
+  }
+  .estado-publicado {
+    color: var(--ok);
+  }
+  .estado-borrador,
+  .estado-revision {
+    color: var(--warn);
+  }
+  .estado-obsoleto {
+    color: var(--crit);
+  }
+</style>

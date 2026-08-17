@@ -1,0 +1,91 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import type { ComponenteCatalogo } from "../../utils/costos";
+
+export async function getStaticPaths() {
+  const conceptos = await getCollection("conceptos");
+  return conceptos.map((c) => ({ params: { slug: c.id }, props: { concepto: c } }));
+}
+
+const { concepto } = Astro.props;
+
+const todosLosProyectos = await getCollection("proyectos");
+const proyectosRelacionados = todosLosProyectos.filter((p) =>
+  p.data.conceptos.some((c) => c.slug === concepto.id),
+);
+
+const componentesEntradas = await getCollection("componentes");
+const catalogo = new Map<string, ComponenteCatalogo>(
+  componentesEntradas.map((c) => [c.id, c.data as ComponenteCatalogo]),
+);
+---
+
+<BaseLayout title={concepto.data.nombre} description={concepto.data.resumen}>
+  <section class="pagina">
+    <div class="container angosto">
+      <p class="eyebrow">Glosario</p>
+      <h1>{concepto.data.nombre}</h1>
+      <p class="resumen">{concepto.data.resumen}</p>
+    </div>
+  </section>
+
+  {
+    proyectosRelacionados.length > 0 && (
+      <section class="relacionados">
+        <div class="container">
+          <h2>Proyectos que usan este concepto</h2>
+          <div class="grid">
+            {proyectosRelacionados.map((p) => (
+              <ProjectCard proyecto={p} catalogo={catalogo} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .pagina {
+    padding-block: 3.5rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .angosto {
+    max-width: 42rem;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 3.8vw, 2.4rem);
+    margin-top: 0.5rem;
+  }
+  .resumen {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--ink-2);
+    line-height: 1.65;
+    margin-top: 1.1rem;
+  }
+  .relacionados {
+    padding-block: 2.5rem 4rem;
+  }
+  .relacionados h2 {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  .grid {
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 680px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1080px) {
+    .grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,182 @@
+---
+interface OpcionConcepto {
+  slug: string;
+  nombre: string;
+}
+
+interface Props {
+  conceptos: OpcionConcepto[];
+}
+
+const { conceptos } = Astro.props;
+---
+
+<div class="filtros" id="filtros">
+  <label class="campo">
+    <span>Dificultad</span>
+    <select id="f-dificultad">
+      <option value="">Cualquiera</option>
+      <option value="1">Hasta 1 — Introductorio</option>
+      <option value="2">Hasta 2 — Básico</option>
+      <option value="3">Hasta 3 — Intermedio</option>
+      <option value="4">Hasta 4 — Avanzado</option>
+    </select>
+  </label>
+
+  <label class="campo">
+    <span>Costo</span>
+    <select id="f-costo">
+      <option value="">Cualquiera</option>
+      <option value="bajo">Bajo</option>
+      <option value="medio">Medio</option>
+      <option value="alto">Alto</option>
+    </select>
+  </label>
+
+  <label class="campo">
+    <span>Tiempo</span>
+    <select id="f-tiempo">
+      <option value="">Cualquiera</option>
+      <option value="4">Menos de 4 h</option>
+      <option value="9">Menos de 9 h</option>
+    </select>
+  </label>
+
+  {
+    conceptos.length > 0 && (
+      <label class="campo">
+        <span>Concepto</span>
+        <select id="f-concepto">
+          <option value="">Cualquiera</option>
+          {conceptos.map((c) => (
+            <option value={c.slug}>{c.nombre}</option>
+          ))}
+        </select>
+      </label>
+    )
+  }
+
+  <label class="campo campo-check">
+    <input type="checkbox" id="f-sin-riesgo" />
+    <span>Sin red eléctrica</span>
+  </label>
+
+  <button type="button" id="f-limpiar" class="btn btn-ghost limpiar">Limpiar filtros</button>
+</div>
+
+<p id="f-resultado" class="resultado" aria-live="polite"></p>
+
+<style>
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.25rem;
+    align-items: end;
+    padding: 1.1rem 1.25rem;
+    background: var(--surface-2);
+    border: 1px solid var(--rule);
+    margin-top: 1.75rem;
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-family: var(--sans);
+  }
+  .campo span {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  .campo select {
+    font-family: var(--sans);
+    font-size: 0.84rem;
+    padding: 0.4rem 0.5rem;
+    border: 1px solid var(--rule-strong);
+    background: var(--surface);
+    color: var(--ink);
+    border-radius: 3px;
+    min-width: 10rem;
+  }
+  .campo-check {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.45rem;
+    padding-bottom: 0.4rem;
+  }
+  .campo-check span {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.84rem;
+    color: var(--ink-2);
+    font-family: var(--sans);
+  }
+  .limpiar {
+    margin-left: auto;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.82rem;
+  }
+  .resultado {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+    margin-top: 0.9rem;
+  }
+</style>
+
+<script>
+  const filtros = document.getElementById("filtros");
+  const grid = document.querySelector<HTMLElement>("[data-grid-proyectos]");
+  const resultadoEl = document.getElementById("f-resultado");
+  if (filtros && grid) {
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".card"));
+
+    const dificultad = document.getElementById("f-dificultad") as HTMLSelectElement;
+    const costo = document.getElementById("f-costo") as HTMLSelectElement;
+    const tiempo = document.getElementById("f-tiempo") as HTMLSelectElement;
+    const concepto = document.getElementById("f-concepto") as HTMLSelectElement | null;
+    const sinRiesgo = document.getElementById("f-sin-riesgo") as HTMLInputElement;
+    const limpiar = document.getElementById("f-limpiar");
+
+    const aplicar = () => {
+      let visibles = 0;
+      for (const card of cards) {
+        const okDificultad = !dificultad.value || Number(card.dataset.dificultad) <= Number(dificultad.value);
+        const okCosto = !costo.value || card.dataset.banda === costo.value;
+        const okTiempo = !tiempo.value || Number(card.dataset.tiempoMax) < Number(tiempo.value);
+        const okConcepto =
+          !concepto || !concepto.value || (card.dataset.conceptos ?? "").split(",").includes(concepto.value);
+        const okRiesgo = !sinRiesgo.checked || card.dataset.riesgo === "0";
+
+        const visible = okDificultad && okCosto && okTiempo && okConcepto && okRiesgo;
+        card.hidden = !visible;
+        if (visible) visibles++;
+      }
+      if (resultadoEl) {
+        resultadoEl.textContent =
+          visibles === cards.length
+            ? `${cards.length} proyectos`
+            : `${visibles} de ${cards.length} proyectos`;
+      }
+    };
+
+    for (const control of [dificultad, costo, tiempo, sinRiesgo]) {
+      control?.addEventListener("change", aplicar);
+    }
+    concepto?.addEventListener("change", aplicar);
+
+    limpiar?.addEventListener("click", () => {
+      dificultad.value = "";
+      costo.value = "";
+      tiempo.value = "";
+      if (concepto) concepto.value = "";
+      sinRiesgo.checked = false;
+      aplicar();
+    });
+
+    aplicar();
+  }
+</script>

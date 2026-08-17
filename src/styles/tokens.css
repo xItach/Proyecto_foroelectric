@@ -1,0 +1,92 @@
+/*
+  Identidad visual: verde placa (PCB) + cobre. Mismo sistema que
+  docs/anteproyecto.html, para que el sitio y el documento de trabajo se
+  lean como el mismo proyecto.
+*/
+:root {
+  --bg: #f1f3ef;
+  --surface: #ffffff;
+  --surface-2: #e7ebe4;
+  --ink: #161a15;
+  --ink-2: #4a5247;
+  --ink-3: #6f786b;
+  --rule: #d5dad0;
+  --rule-strong: #b7bfb1;
+
+  --accent: #16543c;
+  --accent-ink: #0f3d2b;
+  --accent-soft: #deeae1;
+  --copper: #8c4e28;
+  --copper-soft: #f1e4d9;
+
+  --crit: #9a2b1e;
+  --crit-bg: #f7e4e1;
+  --warn: #7f5d0f;
+  --warn-bg: #f5ecd5;
+  --ok: #2c6b4c;
+  --ok-bg: #e0ede5;
+
+  --shadow: 0 1px 2px rgba(22, 26, 21, 0.05), 0 8px 24px -16px rgba(22, 26, 21, 0.25);
+
+  --serif: Charter, "Bitstream Charter", "Iowan Old Style", "Source Serif Pro", Georgia,
+    "Times New Roman", serif;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    sans-serif;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", "Roboto Mono", Menlo, Consolas, monospace;
+
+  --container: 72rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e120f;
+    --surface: #161b17;
+    --surface-2: #1d231e;
+    --ink: #e6eae3;
+    --ink-2: #a9b3a5;
+    --ink-3: #838d7f;
+    --rule: #28302a;
+    --rule-strong: #3b453c;
+
+    --accent: #5fc192;
+    --accent-ink: #8ad7b2;
+    --accent-soft: #16301f;
+    --copper: #d9925f;
+    --copper-soft: #2b1f17;
+
+    --crit: #ef8a7c;
+    --crit-bg: #2e1714;
+    --warn: #dcb05c;
+    --warn-bg: #2a2211;
+    --ok: #6bc79a;
+    --ok-bg: #14291e;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -16px rgba(0, 0, 0, 0.8);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0e120f;
+  --surface: #161b17;
+  --surface-2: #1d231e;
+  --ink: #e6eae3;
+  --ink-2: #a9b3a5;
+  --ink-3: #838d7f;
+  --rule: #28302a;
+  --rule-strong: #3b453c;
+
+  --accent: #5fc192;
+  --accent-ink: #8ad7b2;
+  --accent-soft: #16301f;
+  --copper: #d9925f;
+  --copper-soft: #2b1f17;
+
+  --crit: #ef8a7c;
+  --crit-bg: #2e1714;
+  --warn: #dcb05c;
+  --warn-bg: #2a2211;
+  --ok: #6bc79a;
+  --ok-bg: #14291e;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -16px rgba(0, 0, 0, 0.8);
+}

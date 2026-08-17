@@ -1,0 +1,128 @@
+---
+interface Imagen {
+  alt: string;
+  src?: string;
+}
+
+interface Props {
+  imagenes: Imagen[];
+}
+
+const { imagenes } = Astro.props;
+---
+
+{
+  imagenes.length > 0 ? (
+    <div class="carrusel">
+      <div class="pista" tabindex="0" role="region" aria-label="Fotos del montaje">
+        {imagenes.map((img) => (
+          <figure class="cuadro">
+            {img.src ? (
+              <img src={img.src} alt={img.alt} loading="lazy" />
+            ) : (
+              <div class="placeholder" role="img" aria-label={img.alt}>
+                <span>{img.alt}</span>
+              </div>
+            )}
+          </figure>
+        ))}
+      </div>
+      {imagenes.length > 1 && (
+        <div class="controles">
+          <button type="button" class="anterior" aria-label="Foto anterior">‹</button>
+          <button type="button" class="siguiente" aria-label="Foto siguiente">›</button>
+        </div>
+      )}
+    </div>
+  ) : (
+    <div class="vacio">Aún no hay fotos del montaje para este proyecto.</div>
+  )
+}
+
+<style>
+  .carrusel {
+    position: relative;
+  }
+  .pista {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 0.5rem;
+    scrollbar-width: thin;
+  }
+  .cuadro {
+    flex: 0 0 min(22rem, 82vw);
+    scroll-snap-align: start;
+    margin: 0;
+  }
+  .cuadro img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 1px solid var(--rule);
+  }
+  .placeholder {
+    aspect-ratio: 4 / 3;
+    border: 1px dashed var(--rule-strong);
+    background: repeating-linear-gradient(135deg, var(--surface-2) 0 8px, transparent 8px 16px),
+      var(--surface);
+    display: flex;
+    align-items: flex-end;
+    padding: 0.7rem;
+  }
+  .placeholder span {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-3);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 0.25rem 0.5rem;
+  }
+  .controles {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+  .controles button {
+    font-family: var(--sans);
+    font-size: 1.1rem;
+    width: 2.1rem;
+    height: 2.1rem;
+    border: 1px solid var(--rule-strong);
+    background: var(--surface);
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: 3px;
+  }
+  .controles button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .vacio {
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    color: var(--ink-3);
+    border: 1px dashed var(--rule-strong);
+    padding: 1.5rem;
+    text-align: center;
+  }
+</style>
+
+<script>
+  for (const carrusel of document.querySelectorAll<HTMLElement>(".carrusel")) {
+    const pista = carrusel.querySelector<HTMLElement>(".pista");
+    const anterior = carrusel.querySelector<HTMLButtonElement>(".anterior");
+    const siguiente = carrusel.querySelector<HTMLButtonElement>(".siguiente");
+    if (!pista) continue;
+
+    const desplazar = (direccion: 1 | -1) => {
+      const cuadro = pista.querySelector<HTMLElement>(".cuadro");
+      const paso = cuadro ? cuadro.getBoundingClientRect().width + 12 : pista.clientWidth;
+      pista.scrollBy({ left: paso * direccion, behavior: "smooth" });
+    };
+
+    anterior?.addEventListener("click", () => desplazar(-1));
+    siguiente?.addEventListener("click", () => desplazar(1));
+  }
+</script>

@@ -1,0 +1,592 @@
+% !TeX program = pdflatex
+% !TeX spellcheck = es_ES
+%=======================================================================
+%  INFORME DE LABORATORIO — FORMATO IEEE (clase IEEEtran)
+%  Tema: Simulacion de un automatismo electrico (diagrama ladder) en CADe SIMU
+%
+%  COMO COMPILAR EN OVERLEAF:
+%    Menu > Settings > Compiler  ->  pdfLaTeX
+%    Menu > Settings > TeX Live version -> la mas reciente
+%  El logo va en figuras/logo-universidad.png (ver README.md)
+%=======================================================================
+\documentclass[conference,a4paper,10pt]{IEEEtran}
+
+%----------------------- Idioma y codificacion -------------------------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{mathptmx}              % tipografia Times, la del estilo IEEE
+
+%----------------------------- Utilidades ------------------------------
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{tikz}                  % para el diagrama de tiempos
+\usepackage{cite}                  % agrupa citas: [1]-[3]
+\usepackage{eso-pic}               % coloca el logo en el margen superior
+\usepackage[hidelinks,breaklinks=true]{hyperref}
+
+%=======================================================================
+%  1. DATOS INSTITUCIONALES  ->  EDITA SOLO ESTE BLOQUE
+%=======================================================================
+\newcommand{\universidad}{UNIVERSIDAD XXXXXXXX}
+\newcommand{\facultad}{Facultad de Ingeniería}
+\newcommand{\programa}{Programa de Ingeniería Electrónica}
+\newcommand{\asignatura}{Automatismos Eléctricos --- Grupo XX}
+\newcommand{\fechainforme}{Ciudad, \today}
+
+% Archivo del logo (CON extension). Si no existe, se dibuja un recuadro
+% de reserva para que el documento compile igual.
+\newcommand{\archivologo}{figuras/logo-universidad.png}
+
+% Tamano y posicion del logo dentro del margen superior
+\newlength{\altologo}      \setlength{\altologo}{15mm}
+\newlength{\margensuplogo} \setlength{\margensuplogo}{7mm}  % desde el borde del papel
+\newlength{\margenlatlogo} \setlength{\margenlatlogo}{18mm} % desde el borde izq/der
+
+% Espacio extra sobre el titulo para que no choque con el logo.
+% Ponlo en 0mm si tu logo es pequeno y sobra aire.
+\newcommand{\bajartitulo}{\vspace*{8mm}}
+
+%=======================================================================
+%  2. MAQUINARIA DEL ENCABEZADO CON LOGO  (no necesitas tocar esto)
+%=======================================================================
+\newlength{\anchoencabezado}
+\setlength{\anchoencabezado}{\dimexpr\paperwidth-2\margenlatlogo\relax}
+\newlength{\bajadalogo}          % desplazamiento vertical del encabezado
+\setlength{\bajadalogo}{-\margensuplogo}
+\addtolength{\bajadalogo}{-\altologo}
+\newlength{\altocajareserva}     % alto util del recuadro de reserva
+\setlength{\altocajareserva}{\altologo}
+\addtolength{\altocajareserva}{-4pt}
+
+% Logo real o recuadro de reserva si el archivo aun no existe
+\newcommand{\cajalogo}{%
+  \expandafter\IfFileExists\expandafter{\archivologo}%
+    {\includegraphics[height=\altologo]{\archivologo}}%
+    {\setlength{\fboxsep}{2pt}%
+     \fbox{\parbox[b][\altocajareserva][c]{32mm}%
+       {\centering\scriptsize\textsf{LOGO DE LA\\UNIVERSIDAD}}}}%
+}
+
+% Bloque logo (izquierda) + datos institucionales (derecha),
+% dibujado en el margen superior SOLO de la primera pagina.
+\newcommand{\encabezadoinstitucional}{%
+  \AddToShipoutPictureBG*{%
+    \AtPageUpperLeft{%
+      \raisebox{\bajadalogo}{%
+        \makebox[\paperwidth][c]{%
+          \begin{minipage}{\anchoencabezado}%
+            \noindent\cajalogo\hfill
+            \parbox[b][\altologo][c]{0.60\anchoencabezado}{%
+              \raggedleft\scriptsize
+              \textsc{\universidad}\\[1pt]
+              \facultad\\[1pt]
+              \programa\\[1pt]
+              \asignatura\\[1pt]
+              \fechainforme\par}%
+          \end{minipage}}}}%
+  }%
+}
+% ---- Insercion de figuras tolerante a archivos faltantes --------------
+% Uso: \imagen{<ancho>}{<ruta/archivo.ext>}
+% Si el archivo no existe todavia, dibuja un recuadro con el nombre que
+% falta en lugar de detener la compilacion. Cuando ya tengas todas las
+% imagenes puedes cambiarlo por \includegraphics[width=...]{...} normal.
+\newcommand{\imagen}[2]{%
+  \IfFileExists{#2}%
+    {\includegraphics[width=#1]{#2}}%
+    {\fbox{\parbox[c][30mm][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}%
+      {\centering\footnotesize\textsf{[Falta la imagen]\\\texttt{#2}}}}}%
+}
+
+% Para pasar el logo a la DERECHA y el texto a la IZQUIERDA:
+% intercambia \cajalogo y el \parbox dentro del minipage de arriba
+% (y cambia \raggedleft por \raggedright).
+
+%=======================================================================
+%  3. TITULO Y AUTORES
+%=======================================================================
+\title{\bajartitulo Simulación de un automatismo eléctrico mediante diagrama
+de escalera (ladder) en CADe SIMU}
+
+\author{
+\IEEEauthorblockN{Nombre Apellido Apellido}
+\IEEEauthorblockA{Código: 000000000\\
+\programa\\
+\universidad\\
+correo1@universidad.edu}
+\and
+\IEEEauthorblockN{Nombre Apellido Apellido}
+\IEEEauthorblockA{Código: 000000000\\
+\programa\\
+\universidad\\
+correo2@universidad.edu}
+\and
+\IEEEauthorblockN{Nombre Apellido Apellido}
+\IEEEauthorblockA{Código: 000000000\\
+\programa\\
+\universidad\\
+correo3@universidad.edu}
+}
+
+%=======================================================================
+\begin{document}
+
+% Etiquetas al estilo IEEE (van despues de \begin{document} para
+% que no las sobreescriba babel)
+\renewcommand{\figurename}{Fig.}
+\renewcommand{\tablename}{TABLA}
+
+\encabezadoinstitucional   % <- dibuja el logo en el margen de la pagina 1
+\maketitle
+\thispagestyle{plain}      % numero de pagina tambien en la primera hoja
+\pagestyle{plain}          % comenta estas dos lineas si no quieres numeracion
+
+%-----------------------------------------------------------------------
+\begin{abstract}
+% RESUMEN: 150-250 palabras. Escribelo AL FINAL, cuando ya sepas que dio
+% la simulacion. Debe responder: que se simulo, con que herramienta, como
+% se verifico y cual fue el resultado principal.
+En este informe se documenta el diseño, la implementación y la validación
+de un automatismo eléctrico para el control de un motor asíncrono trifásico,
+desarrollado en lenguaje de contactos (diagrama ladder) y simulado en la
+herramienta CADe SIMU. Se describe el proceso a automatizar, la asignación de
+entradas y salidas, las ecuaciones lógicas que gobiernan el circuito de mando
+y la construcción de los circuitos de fuerza y control. La verificación se
+realizó mediante un protocolo de pruebas que contrasta cada requisito
+funcional con el estado observado en la simulación, incluyendo las condiciones
+de falla y las maniobras de protección. Los resultados muestran que el
+automatismo cumple XX de XX requisitos definidos, y se discuten las
+diferencias encontradas entre el comportamiento simulado y el esperado.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Automatismo eléctrico, diagrama de escalera, CADe SIMU, contactor,
+enclavamiento, simulación, motor trifásico.
+\end{IEEEkeywords}
+
+% --- Abstract en ingles: eliminalo si el docente no lo exige -----------
+\vspace{6pt}
+\noindent\textit{\textbf{Abstract}---This report documents the design,
+implementation and validation of an electrical control system for a
+three-phase induction motor, developed in ladder logic and simulated with
+CADe SIMU. The process description, I/O assignment, logic equations, power
+and control circuits are presented, together with a test protocol that
+contrasts every functional requirement against the simulated behaviour,
+including fault and protection conditions.}
+
+\vspace{4pt}
+\noindent\textit{\textbf{Index Terms}---Electrical control, ladder diagram,
+CADe SIMU, contactor, interlocking, simulation, three-phase motor.}
+\vspace{6pt}
+
+%=======================================================================
+\section{Introducción}
+%=======================================================================
+% Que responde esta seccion:
+%   1) contexto: por que existen los automatismos cableados
+%   2) problema: que se quiere controlar y por que es relevante
+%   3) por que simular antes de cablear
+%   4) que hace este informe y como esta organizado
+\IEEEPARstart{L}{os} automatismos eléctricos cableados constituyen la base del
+control industrial de maquinaria, y su representación mediante diagramas de
+escalera o \textit{ladder} sigue siendo el lenguaje más extendido tanto en
+lógica cableada como en la programación de controladores lógicos programables,
+normalizado en la IEC~61131-3 \cite{iec61131}. Un error en el circuito de mando
+puede provocar cortocircuitos, daño de equipos o riesgo para el operario, por
+lo que la simulación previa al montaje es una etapa necesaria del diseño.
+
+CADe SIMU es una herramienta de diseño y simulación de circuitos eléctricos
+que permite dibujar los esquemas de fuerza y de mando con simbología
+normalizada y ejecutar la simulación observando en tiempo real qué elementos
+conducen \cite{cadesimu}. Esto permite validar la lógica antes de llevarla al
+tablero real.
+
+En este trabajo se implementa y simula \textbf{[describe en una frase el
+automatismo: p.\,ej. el arranque directo con inversión de giro de un motor
+trifásico]}. El documento se organiza así: la Sección~\ref{sec:objetivos}
+plantea los objetivos; la Sección~\ref{sec:marco} resume los fundamentos
+teóricos; la Sección~\ref{sec:materiales} lista los materiales y el software;
+la Sección~\ref{sec:proceso} describe el proceso a automatizar y sus
+requisitos; la Sección~\ref{sec:desarrollo} detalla el desarrollo de la
+simulación; la Sección~\ref{sec:resultados} presenta las pruebas y resultados;
+la Sección~\ref{sec:analisis} los analiza y la Sección~\ref{sec:conclusiones}
+concluye.
+
+%=======================================================================
+\section{Objetivos}\label{sec:objetivos}
+%=======================================================================
+\subsection{Objetivo general}
+Diseñar, implementar y validar mediante simulación en CADe SIMU un automatismo
+eléctrico basado en diagrama de escalera que cumpla las condiciones de
+operación y protección definidas para \textbf{[el proceso]}.
+
+\subsection{Objetivos específicos}
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
+  \item Identificar los elementos de mando, maniobra, protección y
+        señalización requeridos por el proceso.
+  \item Definir la tabla de asignación de entradas y salidas del automatismo.
+  \item Obtener las ecuaciones lógicas del circuito de mando y traducirlas a
+        lenguaje de contactos.
+  \item Construir los circuitos de fuerza y de control en CADe SIMU con
+        simbología normalizada.
+  \item Verificar mediante un protocolo de pruebas el cumplimiento de cada
+        requisito funcional, incluidas las condiciones de falla.
+\end{itemize}
+
+%=======================================================================
+\section{Marco teórico}\label{sec:marco}
+%=======================================================================
+% Regla practica: solo teoria que uses despues. Si un concepto no aparece
+% en el desarrollo o en el analisis, sobra aqui.
+
+\subsection{Diagrama de escalera}
+El diagrama de escalera representa el circuito de mando entre dos líneas
+verticales de alimentación; cada renglón o \textit{peldaño} contiene la
+combinación de contactos (condiciones) que energiza una bobina o salida
+\cite{petruzella}. Los contactos normalmente abiertos (NA) representan la
+función lógica directa y los normalmente cerrados (NC) su complemento, de modo
+que un renglón equivale a una función booleana de sus entradas.
+
+\subsection{Elementos de mando, maniobra y protección}
+% Describe brevemente SOLO los que usaste: pulsadores NA/NC, selector,
+% contactor, rele termico, guardamotor, fusibles, lamparas de senalizacion,
+% final de carrera, seta de emergencia...
+Los pulsadores de marcha y paro, el contactor como elemento de maniobra, el
+relé térmico y el guardamotor como protecciones, y las lámparas de
+señalización conforman el conjunto mínimo de un automatismo de arranque. La
+simbología empleada corresponde a la norma IEC~60617 \cite{iec60617}.
+
+\subsection{Realimentación y enclavamientos}
+El contacto auxiliar de la propia bobina en paralelo con el pulsador de marcha
+constituye la \textit{realimentación} o enclavamiento eléctrico, que mantiene
+el circuito energizado tras soltar el pulsador. El \textit{enclavamiento
+mutuo} entre dos contactores se implementa intercalando el contacto NC de cada
+uno en el renglón del otro, e impide maniobras incompatibles como la
+alimentación simultánea de dos sentidos de giro \cite{roldan}.
+
+\subsection{Temporizadores y contadores}
+% Elimina esta subseccion si tu practica no los usa.
+El temporizador a la conexión (TON) retarda la activación de su contacto un
+tiempo $t$ tras energizarse su bobina, mientras que el temporizador a la
+desconexión (TOFF) retarda la desactivación. Son la base de secuencias
+automáticas como el arranque estrella-triángulo.
+
+\subsection{CADe SIMU como entorno de simulación}
+CADe SIMU permite dibujar sobre una hoja los circuitos de fuerza y mando
+empleando librerías de símbolos normalizados y ejecutar la simulación, durante
+la cual los conductores energizados cambian de color y los contactos asociados
+a una bobina conmutan automáticamente \cite{cadesimu}. La herramienta no
+resuelve el comportamiento eléctrico transitorio: valida la \textit{lógica} de
+la maniobra y la continuidad del circuito, lo que debe tenerse presente al
+interpretar los resultados.
+
+%=======================================================================
+\section{Materiales y software}\label{sec:materiales}
+%=======================================================================
+En la Tabla~\ref{tab:materiales} se listan los elementos empleados en la
+simulación con su designación en el esquema.
+
+\begin{table}[!t]
+\renewcommand{\arraystretch}{1.15}
+\caption{Elementos empleados en la simulación}
+\label{tab:materiales}
+\centering
+\footnotesize
+\begin{tabular}{@{}clcl@{}}
+\toprule
+\textbf{Ítem} & \textbf{Elemento} & \textbf{Cant.} & \textbf{Designación} \\
+\midrule
+1 & Motor asíncrono trifásico, 220/380 V & 1 & M1 \\
+2 & Contactor tripolar + aux.            & 2 & KM1, KM2 \\
+3 & Relé térmico                         & 1 & F1 \\
+4 & Guardamotor / magnetotérmico         & 1 & Q1 \\
+5 & Pulsador NA (marcha)                 & 2 & S1, S2 \\
+6 & Pulsador NC (paro)                   & 1 & S0 \\
+7 & Seta de emergencia con retención     & 1 & S3 \\
+8 & Lámpara de señalización              & 3 & H1, H2, H3 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Software:} CADe SIMU versión \textbf{[X.X]}, ejecutado sobre
+\textbf{[sistema operativo]}. El archivo de simulación se entrega como anexo
+con el nombre \texttt{[nombre\_archivo].dsm}.
+
+%=======================================================================
+\section{Descripción del proceso a automatizar}\label{sec:proceso}
+%=======================================================================
+% Aqui va el enunciado de la practica REDACTADO POR USTEDES, no copiado.
+% Separa la narracion (que hace la maquina) de los requisitos (lista
+% numerada y verificable). Esos requisitos son los que vas a probar
+% uno por uno en la Seccion de resultados: por eso se numeran.
+
+\subsection{Planteamiento}
+\textbf{[Describe la máquina o el proceso: qué acciona el motor, en qué
+condiciones arranca y se detiene, qué debe señalizarse, qué ocurre ante una
+falla.]}
+
+\subsection{Requisitos funcionales}
+\begin{enumerate}[label=\textbf{R\arabic*.},leftmargin=2.2em,itemsep=1pt,topsep=2pt]
+  \item Al accionar S1 el motor arranca en sentido directo y permanece en
+        marcha al soltar el pulsador.
+  \item Al accionar S2 el motor arranca en sentido inverso bajo las mismas
+        condiciones.
+  \item No debe ser posible energizar KM1 y KM2 simultáneamente.
+  \item El pulsador S0 detiene el motor en cualquier estado.
+  \item El disparo del relé térmico F1 detiene el motor y activa la
+        señalización de falla H3.
+  \item La lámpara H1 indica marcha y H2 indica paro.
+\end{enumerate}
+
+%=======================================================================
+\section{Desarrollo de la simulación}\label{sec:desarrollo}
+%=======================================================================
+% Esta es la seccion que mas peso tiene. El orden propuesto va de lo
+% abstracto a lo concreto: variables -> logica -> esquema -> procedimiento.
+
+\subsection{Asignación de entradas y salidas}
+La Tabla~\ref{tab:io} relaciona cada elemento físico con la variable lógica
+empleada en las ecuaciones y en el diagrama de escalera.
+
+\begin{table}[!t]
+\renewcommand{\arraystretch}{1.15}
+\caption{Asignación de entradas y salidas}
+\label{tab:io}
+\centering
+\footnotesize
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Variable} & \textbf{Elemento} & \textbf{Tipo} & \textbf{Función} \\
+\midrule
+S0 & Pulsador NC   & Entrada & Paro general \\
+S1 & Pulsador NA   & Entrada & Marcha directa \\
+S2 & Pulsador NA   & Entrada & Marcha inversa \\
+F1 & Contacto NC del relé térmico & Entrada & Protección \\
+KM1 & Bobina de contactor & Salida & Giro directo \\
+KM2 & Bobina de contactor & Salida & Giro inverso \\
+H1 & Lámpara & Salida & Señalización de marcha \\
+H3 & Lámpara & Salida & Señalización de falla \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Ecuaciones lógicas del circuito de mando}
+A partir de los requisitos se obtienen las ecuaciones booleanas de cada
+bobina. La realimentación aparece como el término $KM_i$ en paralelo con el
+pulsador de marcha, y el enclavamiento mutuo como los factores
+$\overline{KM_2}$ y $\overline{KM_1}$:
+\begin{align}
+  KM_1 &= (S_1 + KM_1)\cdot \overline{S_0}\cdot \overline{F_1}\cdot \overline{KM_2} \label{eq:km1}\\
+  KM_2 &= (S_2 + KM_2)\cdot \overline{S_0}\cdot \overline{F_1}\cdot \overline{KM_1} \label{eq:km2}\\
+  H_1  &= KM_1 + KM_2 \label{eq:h1}\\
+  H_3  &= F_1 \label{eq:h3}
+\end{align}
+Cada ecuación se traduce directamente a un renglón del diagrama de escalera:
+los términos en producto se conectan en serie y los términos en suma en
+paralelo.
+
+\subsection{Circuito de fuerza}
+En la Fig.~\ref{fig:fuerza} se muestra el circuito de fuerza, con la
+protección Q1, los contactos principales de los contactores, el relé térmico
+F1 y el motor M1. La inversión de giro se obtiene permutando dos de las tres
+fases en KM2.
+
+\begin{figure}[!t]
+  \centering
+  % Sustituye por la captura de CADe SIMU del circuito de fuerza
+  \imagen{\columnwidth}{figuras/circuito-fuerza.png}
+  \caption{Circuito de fuerza implementado en CADe SIMU.}
+  \label{fig:fuerza}
+\end{figure}
+
+\subsection{Circuito de control en lenguaje de contactos}
+La Fig.~\ref{fig:ladder} presenta el diagrama de escalera resultante de las
+ecuaciones (\ref{eq:km1})--(\ref{eq:h3}). Se emplea una figura a dos columnas
+para que los renglones sean legibles; si tu esquema es angosto, usa el entorno
+\texttt{figure} normal como en la Fig.~\ref{fig:fuerza}.
+
+\begin{figure*}[!t]
+  \centering
+  % Sustituye por la captura del diagrama ladder completo
+  \imagen{0.86\textwidth}{figuras/diagrama-ladder.png}
+  \caption{Diagrama de escalera del circuito de mando. Cada renglón
+  corresponde a una de las ecuaciones lógicas planteadas.}
+  \label{fig:ladder}
+\end{figure*}
+
+\subsection{Procedimiento seguido en CADe SIMU}
+% Escribe lo que HICIERON, en pasado y en pasos reproducibles. Un tercero
+% deberia poder repetir la simulacion leyendo esto.
+\begin{enumerate}[leftmargin=1.6em,itemsep=1pt,topsep=2pt]
+  \item Se creó un nuevo esquema y se seleccionó la norma de simbología
+        \textbf{[IEC/otra]} y el número de hojas requerido.
+  \item Se trazó la alimentación trifásica y se insertaron Q1, los contactos
+        principales de KM1 y KM2, F1 y el motor M1.
+  \item Se dibujó el circuito de mando entre las líneas de alimentación,
+        insertando pulsadores, contactos auxiliares, bobinas y lámparas.
+  \item Se etiquetó cada elemento con la designación de la
+        Tabla~\ref{tab:io}, de modo que los contactos auxiliares quedaran
+        asociados a su bobina.
+  \item Se ejecutó la simulación y se accionaron los elementos de mando
+        siguiendo el protocolo de pruebas de la Tabla~\ref{tab:pruebas},
+        registrando el estado de las salidas en cada caso.
+\end{enumerate}
+
+%=======================================================================
+\section{Pruebas y resultados}\label{sec:resultados}
+%=======================================================================
+% Resultados = lo que se OBSERVO, sin interpretarlo todavia.
+% Interpretar es tarea de la seccion siguiente.
+
+\subsection{Protocolo de pruebas}
+Cada requisito de la Sección~\ref{sec:proceso} se verificó accionando la
+entrada correspondiente y observando el estado de las salidas durante la
+simulación. La Tabla~\ref{tab:pruebas} resume los casos ejecutados.
+
+\begin{table*}[!t]
+\renewcommand{\arraystretch}{1.2}
+\caption{Protocolo de pruebas y resultados observados en la simulación}
+\label{tab:pruebas}
+\centering
+\footnotesize
+\begin{tabular}{@{}clllcc@{}}
+\toprule
+\textbf{\#} & \textbf{Req.} & \textbf{Acción ejecutada} & \textbf{Resultado esperado} &
+\textbf{Resultado observado} & \textbf{Cumple} \\
+\midrule
+1 & R1 & Pulsar y soltar S1 & KM1 energizado, se mantiene; H1 encendida & & Sí / No \\
+2 & R2 & Pulsar y soltar S2 con motor parado & KM2 energizado, se mantiene & & Sí / No \\
+3 & R3 & Pulsar S2 con KM1 activo & KM2 no se energiza & & Sí / No \\
+4 & R4 & Pulsar S0 en marcha & Ambas bobinas se desenergizan & & Sí / No \\
+5 & R5 & Forzar disparo de F1 & Motor se detiene; H3 encendida & & Sí / No \\
+6 & R6 & Observar señalización en reposo & H2 encendida, H1 apagada & & Sí / No \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\subsection{Estados de la simulación}
+Las Figs.~\ref{fig:estado-reposo} y \ref{fig:estado-marcha} muestran el estado
+del circuito en reposo y en marcha directa; los conductores energizados se
+distinguen por el cambio de color que aplica el simulador.
+
+\begin{figure}[!t]
+  \centering
+  \imagen{\columnwidth}{figuras/estado-reposo.png}
+  \caption{Estado del automatismo en reposo: ninguna bobina energizada.}
+  \label{fig:estado-reposo}
+\end{figure}
+
+\begin{figure}[!t]
+  \centering
+  \imagen{\columnwidth}{figuras/estado-marcha.png}
+  \caption{Estado del automatismo tras accionar S1: KM1 energizado y
+  realimentado por su contacto auxiliar.}
+  \label{fig:estado-marcha}
+\end{figure}
+
+\subsection{Diagrama de tiempos}
+La Fig.~\ref{fig:cronograma} representa la secuencia temporal de las señales
+durante una maniobra completa de marcha y paro.
+% Ajusta los quiebres de cada linea a TU secuencia. Coordenada x = tiempo.
+\begin{figure}[!t]
+\centering
+\begin{tikzpicture}[x=0.85cm,y=0.5cm,line width=0.7pt]
+  \scriptsize
+  % Instantes de conmutacion
+  \draw[dashed,gray!70] (1,-0.6) -- (1,7.2);
+  \draw[dashed,gray!70] (1.8,-0.6) -- (1.8,7.2);
+  \draw[dashed,gray!70] (5,-0.6) -- (5,7.2);
+  \node[gray!80] at (1,7.6) {$t_1$};
+  \node[gray!80] at (1.8,7.6) {$t_2$};
+  \node[gray!80] at (5,7.6) {$t_3$};
+  % S1 (marcha): pulso t1..t2
+  \node[anchor=east] at (-0.1,6) {S1};
+  \draw (0,6) -- (1,6) -- (1,7) -- (1.8,7) -- (1.8,6) -- (7,6);
+  % S0 (paro, NC): pulso en t3
+  \node[anchor=east] at (-0.1,4) {S0};
+  \draw (0,4) -- (5,4) -- (5,5) -- (5.6,5) -- (5.6,4) -- (7,4);
+  % KM1: se energiza en t1 y cae en t3
+  \node[anchor=east] at (-0.1,2) {KM1};
+  \draw (0,2) -- (1,2) -- (1,3) -- (5,3) -- (5,2) -- (7,2);
+  % H1: sigue a KM1
+  \node[anchor=east] at (-0.1,0) {H1};
+  \draw (0,0) -- (1,0) -- (1,1) -- (5,1) -- (5,0) -- (7,0);
+  % Eje de tiempo
+  \draw[->] (0,-0.6) -- (7.3,-0.6) node[right] {$t$};
+\end{tikzpicture}
+\caption{Diagrama de tiempos de la maniobra de marcha directa y paro.}
+\label{fig:cronograma}
+\end{figure}
+
+%=======================================================================
+\section{Análisis de resultados}\label{sec:analisis}
+%=======================================================================
+% Aqui SI se interpreta. Preguntas que conviene responder:
+%   - Coincide lo observado con lo esperado? Donde no, y por que?
+%   - Que errores aparecieron al construir el esquema y como se corrigieron?
+%   - Que papel jugo cada enclavamiento: que pasaria si se quitara?
+%   - Que limites tiene la simulacion frente al montaje real?
+\textbf{[Contrasta cada fila de la Tabla~\ref{tab:pruebas} con lo esperado.]}
+El enclavamiento mutuo introducido por los factores $\overline{KM_2}$ y
+$\overline{KM_1}$ en (\ref{eq:km1}) y (\ref{eq:km2}) resultó determinante: al
+retirarlo de forma experimental, la simulación permitió energizar ambas
+bobinas simultáneamente, condición que en el circuito de fuerza equivale a un
+cortocircuito entre fases.
+
+Debe señalarse que CADe SIMU valida la continuidad y la lógica de la maniobra,
+pero no modela el tiempo de conmutación de los contactos ni el arco eléctrico,
+de modo que fenómenos como el rebote de contactos o la necesidad de un
+enclavamiento mecánico adicional entre contactores no se evidencian en la
+simulación y deben considerarse en el montaje real.
+
+%=======================================================================
+\section{Conclusiones}\label{sec:conclusiones}
+%=======================================================================
+% Una conclusion por objetivo especifico. Deben responder a lo que
+% SE HIZO, no a lo que se aprendio en general.
+\begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
+  \item \textbf{[Conclusión sobre el cumplimiento de los requisitos.]}
+  \item \textbf{[Conclusión sobre la traducción ecuaciones $\rightarrow$ ladder.]}
+  \item \textbf{[Conclusión sobre el papel de las protecciones y enclavamientos.]}
+  \item \textbf{[Conclusión sobre la utilidad y los límites de la simulación.]}
+\end{itemize}
+
+%=======================================================================
+\section{Recomendaciones}
+%=======================================================================
+% Opcional: borra la seccion si no la piden.
+\textbf{[Mejoras al automatismo, precauciones para el montaje real,
+trabajo futuro.]}
+
+%=======================================================================
+\appendices
+\section{Aportes de los integrantes}
+\begin{table}[!h]
+\renewcommand{\arraystretch}{1.15}
+\centering
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Integrante} & \textbf{Aporte principal} \\
+\midrule
+Nombre 1 & Diseño de la lógica y ecuaciones \\
+Nombre 2 & Montaje del esquema en CADe SIMU \\
+Nombre 3 & Protocolo de pruebas y redacción \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Archivos anexos}
+Se adjunta el archivo de simulación \texttt{[nombre\_archivo].dsm} y las
+capturas en resolución original empleadas en las figuras de este informe.
+
+%=======================================================================
+\bibliographystyle{IEEEtran}
+\bibliography{referencias}
+
+\end{document}

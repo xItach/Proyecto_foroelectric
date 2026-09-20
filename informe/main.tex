@@ -42,28 +42,38 @@
 % de reserva para que el documento compile igual.
 \newcommand{\archivologo}{figuras/logo-universidad.png}
 
-% Tamano y posicion del logo dentro del margen superior
-\newlength{\altologo}      \setlength{\altologo}{15mm}
-\newlength{\margensuplogo} \setlength{\margensuplogo}{7mm}  % desde el borde del papel
-\newlength{\margenlatlogo} \setlength{\margenlatlogo}{18mm} % desde el borde izq/der
-
-% Espacio extra sobre el titulo para que no choque con el logo.
-% Ponlo en 0mm si tu logo es pequeno y sobra aire.
-\newcommand{\bajartitulo}{\vspace*{8mm}}
+% Geometria del encabezado. NO hace falta cuadrar nada a mano: el bloque
+% se mide al compilar y el titulo baja solo lo necesario para dejar
+% \holguratitulo de aire, aunque cambies el alto del logo.
+\newlength{\altologo}      \setlength{\altologo}{13mm}      % alto del logo
+\newlength{\margensuplogo} \setlength{\margensuplogo}{6mm}  % borde del papel -> encabezado
+\newlength{\margenlatlogo} \setlength{\margenlatlogo}{18mm} % margen lateral del encabezado
+\newlength{\holguratitulo} \setlength{\holguratitulo}{5mm}  % aire entre encabezado y titulo
 
 %=======================================================================
-%  2. MAQUINARIA DEL ENCABEZADO CON LOGO  (no necesitas tocar esto)
+%  2. MAQUINARIA DEL ENCABEZADO  (no necesitas tocar nada de aqui)
+%
+%  Que hace: arma el bloque "logo + datos de la universidad", MIDE su
+%  alto real, lo dibuja en el margen superior de la primera pagina y
+%  calcula cuanto debe bajar el titulo para no solaparse con el.
 %=======================================================================
+\newsavebox{\cjlogo}
+\newsavebox{\cjtexto}
+\newsavebox{\cjencabezado}
 \newlength{\anchoencabezado}
+\newlength{\altoencabezado}
+\newlength{\topetexto}         % borde superior del papel -> area de texto
+\newlength{\bajadaencabezado}
+\newlength{\altoprimeralinea}  % del borde del area de texto a la 1a linea base
+\newlength{\auxenc}
+\newlength{\alzadotitulo}      % alto aproximado de la primera linea del titulo
+\setlength{\alzadotitulo}{6mm}
 \setlength{\anchoencabezado}{\dimexpr\paperwidth-2\margenlatlogo\relax}
-\newlength{\bajadalogo}          % desplazamiento vertical del encabezado
-\setlength{\bajadalogo}{-\margensuplogo}
-\addtolength{\bajadalogo}{-\altologo}
-\newlength{\altocajareserva}     % alto util del recuadro de reserva
+
+% Logo real, o recuadro de reserva si el archivo aun no existe
+\newlength{\altocajareserva}
 \setlength{\altocajareserva}{\altologo}
 \addtolength{\altocajareserva}{-4pt}
-
-% Logo real o recuadro de reserva si el archivo aun no existe
 \newcommand{\cajalogo}{%
   \expandafter\IfFileExists\expandafter{\archivologo}%
     {\includegraphics[height=\altologo]{\archivologo}}%
@@ -72,25 +82,69 @@
        {\centering\scriptsize\textsf{LOGO DE LA\\UNIVERSIDAD}}}}%
 }
 
-% Bloque logo (izquierda) + datos institucionales (derecha),
-% dibujado en el margen superior SOLO de la primera pagina.
+% Texto institucional. Quita o agrega lineas con libertad: el alto se
+% recalcula solo. Si te queda largo, cambia \scriptsize por \tiny.
+\newcommand{\textoinstitucional}{%
+  \raggedleft\scriptsize
+  \textsc{\universidad}\\[1pt]
+  \facultad\\[1pt]
+  \programa\\[1pt]
+  \asignatura\\[1pt]
+  \fechainforme\par}
+
 \newcommand{\encabezadoinstitucional}{%
+  % -- distancia real del borde del papel al area de texto (la fija IEEEtran)
+  \setlength{\topetexto}{1in}%
+  \addtolength{\topetexto}{\voffset}%
+  \addtolength{\topetexto}{\topmargin}%
+  \addtolength{\topetexto}{\headheight}%
+  \addtolength{\topetexto}{\headsep}%
+  % -- 1) se mide el logo
+  \sbox{\cjlogo}{\cajalogo}%
+  % -- 2) el texto ocupa exactamente el ancho que sobra
+  \setlength{\auxenc}{\anchoencabezado}%
+  \addtolength{\auxenc}{-\wd\cjlogo}%
+  \addtolength{\auxenc}{-8mm}%
+  \ifdim\auxenc<40mm
+    \typeout{^^JAVISO: el logo es demasiado ancho; reduce \string\altologo.^^J}%
+    \setlength{\auxenc}{40mm}%
+  \fi
+  \sbox{\cjtexto}{\parbox{\auxenc}{\textoinstitucional}}%
+  % -- 3) el alto del encabezado es el mayor de los dos
+  \setlength{\altoencabezado}{\dimexpr\ht\cjlogo+\dp\cjlogo\relax}%
+  \setlength{\auxenc}{\dimexpr\ht\cjtexto+\dp\cjtexto\relax}%
+  \ifdim\auxenc>\altoencabezado \setlength{\altoencabezado}{\auxenc}\fi
+  % -- 4) se componen logo y texto centrados verticalmente entre si
+  \sbox{\cjencabezado}{%
+    \makebox[\anchoencabezado]{%
+      \parbox[b][\altoencabezado][c]{\wd\cjlogo}{\usebox{\cjlogo}}%
+      \hfill
+      \parbox[b][\altoencabezado][c]{\wd\cjtexto}{\usebox{\cjtexto}}}}%
+  % -- 5) se dibuja en el margen superior, solo en esta pagina
+  \setlength{\bajadaencabezado}{\margensuplogo}%
+  \addtolength{\bajadaencabezado}{\ht\cjencabezado}%
   \AddToShipoutPictureBG*{%
     \AtPageUpperLeft{%
-      \raisebox{\bajadalogo}{%
-        \makebox[\paperwidth][c]{%
-          \begin{minipage}{\anchoencabezado}%
-            \noindent\cajalogo\hfill
-            \parbox[b][\altologo][c]{0.60\anchoencabezado}{%
-              \raggedleft\scriptsize
-              \textsc{\universidad}\\[1pt]
-              \facultad\\[1pt]
-              \programa\\[1pt]
-              \asignatura\\[1pt]
-              \fechainforme\par}%
-          \end{minipage}}}}%
-  }%
+      \raisebox{-\bajadaencabezado}{%
+        \makebox[\paperwidth][c]{\usebox{\cjencabezado}}}}}%
+  % -- 6) cuanto hay que bajar la primera linea del titulo:
+  %       (lo que el encabezado invade el area de texto) + holgura + alzado
+  \setlength{\altoprimeralinea}{\margensuplogo}%
+  \addtolength{\altoprimeralinea}{\altoencabezado}%
+  \addtolength{\altoprimeralinea}{-\topetexto}%
+  \addtolength{\altoprimeralinea}{\holguratitulo}%
+  \addtolength{\altoprimeralinea}{\alzadotitulo}%
+  \ifdim\altoprimeralinea<\z@ \setlength{\altoprimeralinea}{\z@}\fi
 }
+
+% Puntal invisible al inicio del titulo: baja su primera linea sin
+% depender del modo en que IEEEtran componga el bloque de titulo.
+\newcommand{\bajartitulo}{\noindent\rule{0pt}{\altoprimeralinea}}
+
+% Para pasar el logo a la DERECHA y el texto a la IZQUIERDA, intercambia
+% los dos \parbox del paso 4 (y cambia \raggedleft por \raggedright en
+% \textoinstitucional).
+
 % ---- Insercion de figuras tolerante a archivos faltantes --------------
 % Uso: \imagen{<ancho>}{<ruta/archivo.ext>}
 % Si el archivo no existe todavia, dibuja un recuadro con el nombre que
@@ -102,10 +156,6 @@
     {\fbox{\parbox[c][30mm][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}%
       {\centering\footnotesize\textsf{[Falta la imagen]\\\texttt{#2}}}}}%
 }
-
-% Para pasar el logo a la DERECHA y el texto a la IZQUIERDA:
-% intercambia \cajalogo y el \parbox dentro del minipage de arriba
-% (y cambia \raggedleft por \raggedright).
 
 %=======================================================================
 %  3. TITULO Y AUTORES

@@ -34,23 +34,30 @@ sección; son invisibles en el PDF, así que puedes dejarlos.
 ## El logo del margen superior
 
 Se coloca con `eso-pic`, **sin** mover el área de texto, así que no rompe el
-formato IEEE. Ajustes en el bloque 1 de `main.tex`:
+formato IEEE. Solo aparece en la primera página.
 
-- `\altologo` — alto del logo (por defecto 15 mm).
-- `\margensuplogo` — distancia al borde superior del papel (7 mm).
-- `\margenlatlogo` — distancia al borde lateral (18 mm).
-- `\bajartitulo` — espacio extra sobre el título para que no choque con el
-  logo (8 mm). Ponlo en `0mm` si tu logo es pequeño.
+El bloque (logo + datos de la universidad) **se mide al compilar** y el título
+baja automáticamente lo necesario para dejar `\holguratitulo` de aire debajo
+del encabezado. Es decir: puedes cambiar el alto del logo o quitar y agregar
+líneas de texto institucional sin que nada se solape ni tengas que cuadrar
+milímetros a mano.
 
-Si el logo es muy ancho se comerá el espacio del texto institucional: baja
-`\altologo` o cambia el `0.60\anchoencabezado` del `\parbox` por un valor
-menor. Si tu bloque de texto necesita más líneas, cámbialo a `\tiny`.
+Ajustes disponibles, todos en el bloque 1 de `main.tex`:
 
-Para pasar el logo a la derecha y el texto institucional a la izquierda,
-intercambia `\cajalogo` y el `\parbox` dentro del `minipage` de
-`\encabezadoinstitucional` (y cambia `\raggedleft` por `\raggedright`).
-El encabezado solo se dibuja en la primera página, que es lo que pide el
-estilo IEEE.
+- `\altologo` — alto del logo (13 mm por defecto).
+- `\margensuplogo` — distancia al borde superior del papel (6 mm).
+- `\margenlatlogo` — distancia a los bordes laterales (18 mm).
+- `\holguratitulo` — separación entre el encabezado y el título (5 mm).
+  **Si lo ves apretado, sube este valor**: es el único que hay que tocar.
+
+Las líneas del texto institucional se editan en `\textoinstitucional`
+(bloque 2); si te queda largo, cámbialo de `\scriptsize` a `\tiny`. El ancho
+del texto se calcula solo a partir de lo que ocupe el logo, así que un logo
+ancho no lo pisa.
+
+Para pasar el logo a la derecha y el texto a la izquierda, intercambia los dos
+`\parbox` del paso 4 de `\encabezadoinstitucional` y cambia `\raggedleft`
+por `\raggedright`.
 
 ## Estructura del informe
 
@@ -83,5 +90,6 @@ capturas sin decir qué demuestran.
   volver a pulsar *Recompile*); BibTeX necesita una segunda pasada.
 - **`Overfull \hbox`** — es un aviso, no un error. Solo importa si ves texto
   saliéndose de la columna.
-- **El logo pisa el título** — sube el valor de `\bajartitulo` o baja
-  `\altologo`.
+- **El título queda muy pegado (o muy lejos) del encabezado** — es el único
+  ajuste fino que queda: sube o baja `\holguratitulo`. No toques
+  `\bajartitulo`, que ahora se calcula solo.

@@ -25,6 +25,7 @@
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage{tikz}                  % para el diagrama de tiempos
+\usepackage{rotating}              % permite figuras giradas a pagina completa
 \usepackage{cite}                  % agrupa citas: [1]-[3]
 \usepackage{eso-pic}               % coloca el logo en el margen superior
 \usepackage[hidelinks,breaklinks=true]{hyperref}
@@ -468,8 +469,13 @@ para que los renglones sean legibles; si tu esquema es angosto, usa el entorno
 
 \begin{figure*}[!t]
   \centering
-  % Sustituye por la captura del diagrama ladder completo
-  \imagen{0.86\textwidth}{figuras/diagrama-ladder.png}
+  % Esta figura ocupa TODO EL ANCHO DEL PAPEL: la caja mide \textwidth y la
+  % imagen es mas ancha, de modo que sobresale por igual a los dos margenes.
+  % Variantes:
+  %   solo el ancho de las dos columnas -> \imagen{\textwidth}{...} sin \makebox
+  %   una sola columna                  -> figure (sin *) e \imagen{\columnwidth}{...}
+  \hfuzz=30mm  % la imagen se sale a proposito: silencia el aviso Overfull
+  \makebox[\textwidth][c]{\imagen{0.95\paperwidth}{figuras/diagrama-ladder.png}}
   \caption{Diagrama de escalera del circuito de mando. Cada renglón
   corresponde a una de las ecuaciones lógicas planteadas.}
   \label{fig:ladder}

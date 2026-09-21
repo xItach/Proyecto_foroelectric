@@ -88,6 +88,18 @@ capturas sin decir qué demuestran.
   un recuadro en vez de detener la compilación cuando el archivo no existe.
 - **Las citas salen como `[?]`** — compila dos veces (Overleaf lo hace solo al
   volver a pulsar *Recompile*); BibTeX necesita una segunda pasada.
+- **Quiero una figura al ancho completo del papel** — envuélvela en un
+  `\makebox` del ancho del texto, para que el exceso se reparta por igual a
+  ambos lados: `\makebox[\textwidth][c]{\imagen{0.95\paperwidth}{ruta.png}}`
+  dentro de un `figure*`. Si vas a imprimir el informe, baja `0.95` a `0.90`
+  para no quedarte sin margen.
+
+- **La figura no llena el ancho aunque se lo pida** — está topando contra el
+  límite de altura (`\altomaximagen`, 80 % de la altura de texto) porque es
+  más alta que ancha. Súbelo dentro de esa figura con
+  `\renewcommand{\altomaximagen}{0.9\textheight}`, o mejor gírala a página
+  completa con `\begin{sidewaysfigure*}` en vez de `figure*`.
+
 - **Una imagen se sale de la página o no se centra** — el ancho que le pasas
   a `\imagen` es mayor que el área de texto. Máximo `\columnwidth` en una
   figura de una columna y `\textwidth` en una `figure*`. Si la captura se ve

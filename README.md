@@ -93,6 +93,17 @@ formato es más sensible a errores; no vale la pena la fricción de exponerlos a
 - Sin comentarios por ahora — cada guía enlaza a un formulario/issue para reportar errores.
 - Dificultad siempre calculada por la rúbrica de 6 ejes, nunca escrita a mano.
 
+## Herramientas
+
+`herramientas/` guarda utilidades sueltas que no son parte del sitio. Por ahora:
+
+- `herramientas/sumas_riemann/` — simulador de sumas de Riemann en Python: calcula,
+  compara y dibuja en la terminal las distintas reglas (izquierda, derecha, punto medio,
+  sumas de Darboux, trapecio, Simpson) y muestra cómo cae el error al refinar la
+  partición. Sin dependencias; ver su
+  [README](herramientas/sumas_riemann/README.md) o correr
+  `python3 herramientas/sumas_riemann/riemann.py --demo`.
+
 ## Pendiente
 
 - Elegir plataforma de hosting (define cómo se resuelve el OAuth del editor visual).

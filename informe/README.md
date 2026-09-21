@@ -88,6 +88,12 @@ capturas sin decir qué demuestran.
   un recuadro en vez de detener la compilación cuando el archivo no existe.
 - **Las citas salen como `[?]`** — compila dos veces (Overleaf lo hace solo al
   volver a pulsar *Recompile*); BibTeX necesita una segunda pasada.
+- **Una imagen se sale de la página o no se centra** — el ancho que le pasas
+  a `\imagen` es mayor que el área de texto. Máximo `\columnwidth` en una
+  figura de una columna y `\textwidth` en una `figure*`. Si la captura se ve
+  pequeña a ese ancho, el problema es la resolución del PNG, no el ancho:
+  vuelve a capturarla con más zoom en CADe SIMU.
+
 - **`Overfull \hbox`** — es un aviso, no un error. Solo importa si ves texto
   saliéndose de la columna.
 - **El título queda muy pegado (o muy lejos) del encabezado** — es el único

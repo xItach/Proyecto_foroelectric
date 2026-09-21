@@ -147,12 +147,18 @@
 
 % ---- Insercion de figuras tolerante a archivos faltantes --------------
 % Uso: \imagen{<ancho>}{<ruta/archivo.ext>}
+%   <ancho> NO debe pasar de \columnwidth en una figura de una columna
+%   ni de \textwidth en una figure*: mas ancho que eso no cabe en el
+%   papel, se sale por la derecha y \centering no lo puede centrar.
+% La imagen se encaja dentro de <ancho> x \altomaximagen conservando la
+% proporcion, asi que tampoco puede quedar mas alta que la pagina (que
+% haria imposible colocar el flotante).
 % Si el archivo no existe todavia, dibuja un recuadro con el nombre que
-% falta en lugar de detener la compilacion. Cuando ya tengas todas las
-% imagenes puedes cambiarlo por \includegraphics[width=...]{...} normal.
+% falta en lugar de detener la compilacion.
+\newcommand{\altomaximagen}{0.80\textheight}
 \newcommand{\imagen}[2]{%
   \IfFileExists{#2}%
-    {\includegraphics[width=#1]{#2}}%
+    {\includegraphics[width=#1,height=\altomaximagen,keepaspectratio]{#2}}%
     {\fbox{\parbox[c][30mm][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}%
       {\centering\footnotesize\textsf{[Falta la imagen]\\\texttt{#2}}}}}%
 }

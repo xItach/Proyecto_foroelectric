@@ -467,7 +467,13 @@ ecuaciones (\ref{eq:km1})--(\ref{eq:h3}). Se emplea una figura a dos columnas
 para que los renglones sean legibles; si tu esquema es angosto, usa el entorno
 \texttt{figure} normal como en la Fig.~\ref{fig:fuerza}.
 
-\begin{figure*}[!t]
+% [p] = pagina propia de flotantes. Para un diagrama grande es mejor que
+% [!t]: el "!" manda ignorar los limites de tamano de flotante, asi que un
+% figure* mas alto que la pagina deja espacio negativo para el texto y se
+% le encima. Si ademas quieres que salga al FINAL del documento, mueve
+% este bloque entero detras de la bibliografia: un flotante nunca puede
+% salir antes del punto donde se define.
+\begin{figure*}[p]
   \centering
   % Esta figura ocupa TODO EL ANCHO DEL PAPEL: la caja mide \textwidth y la
   % imagen es mas ancha, de modo que sobresale por igual a los dos margenes.

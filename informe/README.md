@@ -88,6 +88,13 @@ capturas sin decir qué demuestran.
   un recuadro en vez de detener la compilación cuando el archivo no existe.
 - **Las citas salen como `[?]`** — compila dos veces (Overleaf lo hace solo al
   volver a pulsar *Recompile*); BibTeX necesita una segunda pasada.
+- **Una figura grande se encima con el texto** — es un flotante más alto que
+  la página. Dale página propia con `[p]` en vez de `[!t]`: el `!` le ordena
+  a LaTeX ignorar los límites de tamaño, y entonces no le queda espacio para
+  el texto de esa página. Para mandarlo al final del documento, mueve el
+  bloque entero detrás de la bibliografía — un flotante nunca sale antes del
+  punto donde se define, pero sí después.
+
 - **Quiero una figura al ancho completo del papel** — envuélvela en un
   `\makebox` del ancho del texto, para que el exceso se reparta por igual a
   ambos lados: `\makebox[\textwidth][c]{\imagen{0.95\paperwidth}{ruta.png}}`

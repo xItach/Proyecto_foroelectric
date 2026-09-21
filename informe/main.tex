@@ -474,12 +474,33 @@ para que los renglones sean legibles; si tu esquema es angosto, usa el entorno
   % Variantes:
   %   solo el ancho de las dos columnas -> \imagen{\textwidth}{...} sin \makebox
   %   una sola columna                  -> figure (sin *) e \imagen{\columnwidth}{...}
+  % El tope de altura por defecto (0.80\textheight) impediria llegar a ese
+  % ancho si la captura es alta: aqui se sube al maximo que admite un
+  % flotante junto con su pie.
+  \renewcommand{\altomaximagen}{0.85\textheight}%
   \hfuzz=30mm  % la imagen se sale a proposito: silencia el aviso Overfull
   \makebox[\textwidth][c]{\imagen{0.95\paperwidth}{figuras/diagrama-ladder.png}}
   \caption{Diagrama de escalera del circuito de mando. Cada renglón
   corresponde a una de las ecuaciones lógicas planteadas.}
   \label{fig:ladder}
 \end{figure*}
+
+% --- ALTERNATIVA: pagina completa en horizontal ------------------------
+% Si el ladder es mas alto que ancho, ni siquiera al ancho del papel se
+% ve bien: la proporcion manda y la imagen se queda pequena. En ese caso
+% borra el figure* de arriba y descomenta este bloque, que gira la
+% figura y le da toda la pagina (el paquete rotating ya esta cargado).
+% Ojo: dentro de una figura girada los ejes se intercambian, por eso el
+% ancho se mide con \textheight y el alto con \textwidth.
+%
+% \begin{sidewaysfigure*}
+%   \centering
+%   \includegraphics[width=0.95\textheight,height=0.88\textwidth,%
+%                    keepaspectratio]{figuras/diagrama-ladder.png}
+%   \caption{Diagrama de escalera del circuito de mando. Cada renglón
+%   corresponde a una de las ecuaciones lógicas planteadas.}
+%   \label{fig:ladder}
+% \end{sidewaysfigure*}
 
 \subsection{Procedimiento seguido en CADe SIMU}
 % Escribe lo que HICIERON, en pasado y en pasos reproducibles. Un tercero

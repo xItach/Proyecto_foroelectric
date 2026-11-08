@@ -25,6 +25,9 @@
 \usepackage{array}
 \usepackage{enumitem}
 \usepackage{tikz}                  % para el diagrama de tiempos
+% Babel en espanol activa los caracteres < y >, lo que rompe las flechas de
+% TikZ (->) y los signos de comparacion en las figuras. Se desactivan.
+\AtBeginDocument{\shorthandoff{<>}}
 \usepackage{rotating}              % permite figuras giradas a pagina completa
 \usepackage{cite}                  % agrupa citas: [1]-[3]
 \usepackage{eso-pic}               % coloca el logo en el margen superior
@@ -135,7 +138,7 @@
   \addtolength{\altoprimeralinea}{-\topetexto}%
   \addtolength{\altoprimeralinea}{\holguratitulo}%
   \addtolength{\altoprimeralinea}{\alzadotitulo}%
-  \ifdim\altoprimeralinea<\z@ \setlength{\altoprimeralinea}{\z@}\fi
+  \ifdim\altoprimeralinea<0pt \setlength{\altoprimeralinea}{0pt}\fi
 }
 
 % Puntal invisible al inicio del titulo: baja su primera linea sin
